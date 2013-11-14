@@ -1,47 +1,47 @@
-Ur VII                                                                                              	a2-ki-ti
-Ur XIII                                                                                             	diri
-Ur VI                                                                                               	ezem-{d}nin-a-zu
-Ur VIII                                                                                             	ezem-{d}szul-gi
-Ur XI                                                                                               	ezem-an-na
-Ur X                                                                                                	ezem-mah
-Ur XII                                                                                              	ezem-me-ki-gal2
-Ur V                                                                                                	ki-sikil-{d}nin-a-zu
-Ur II                                                                                               	masz-da3-gu7
-Ur I                                                                                                	sze-sag-ku5
-Ur I                                                                                                	sze-sag11-ku5
-Ur III                                                                                              	szesz-da-gu7
-Ur III                                                                                              	ses-da-gu7
-Ur IX                                                                                               	szu-esz-sza
-Ur IV                                                                                               	u5-bi2-gu7
-Nippur X                                                                                            	AB-e3
-Girsu X                                                                                             	amar-a-a-si
-Nippur VIII                                                                                         	apin-du8-a
-Nippur I                                                                                            	bara2-za3-gar
-Umma XII                                                                                            	{d}dumu-zi
-Drehem (SzS3) XII                                                                                   	diri ezem-me-ki-gal2
-Nippur VII                                                                                          	du6-ku3
-Umma VIII                                                                                           	e2-iti6
-Umma (AS7-SzS2) VII                                                                                 	ezem-{d}amar-{d}suen
-Girsu VIII                                                                                          	ezem-{d}ba-ba6
-Girsu VI                                                                                            	ezem-{d}dumu-zi
-Girsu III                                                                                           	ezem-{d}li9-si4
-Drehem (SzS3) VIII, (SzS3 - IS8) IX                                                                 	ezem-{d}szu-{d}suen
-Nippur IX                                                                                           	GAN-GAN-e3
-Girsu I                                                                                             	GAN2-masz
-Girsu II                                                                                            	gu4-ra2-bi2-mu2-mu2
-Nippur II                                                                                           	gu4-si-su
-Nippur VI                                                                                           	kin-{d}inanna
-Umma VII                                                                                            	min-esz3
-Girsu IX                                                                                            	mu-szu-du7
-Girsu V                                                                                             	munu4-gu7
-Nippur V                                                                                            	NE-NE-gar
-Umma IV                                                                                             	nesag2
-Umma XI                                                                                             	pa4-u2-e
-Umma V                                                                                              	RI-dal
-Umma II                                                                                             	sig4-geszi3-szub-ba-gar
-Nippur III                                                                                          	sig4-ga
-Girsu XII                                                                                           	sze-il2-la
-Umma III                                                                                            	sze-kar-ra-gal2-la
-Girsu IV, Nippur IV, Umma VI                                                                        	szu-numun
-Girsu VII, Umma (before Sz30) X                                                                     	UR
-Nippur XI                                                                                           	ziz2-a
+01 Girsu I                                                                                             	GAN2-masz
+01 Nippur I                                                                                            	bara2-za3-gar
+01 Ur I                                                                                                	sze-sag11-ku5
+01 Ur I                                                                                                	sze-sag-ku5
+02 Girsu II                                                                                            	gu4-ra2-bi2-mu2-mu2
+02 Nippur II                                                                                           	gu4-si-su
+02 Umma II                                                                                             	sig4-geszi3-szub-ba-gar
+02 Ur II                                                                                               	masz-da3-gu7
+03 Girsu III                                                                                           	ezem-{d}li9-si4
+03 Nippur III                                                                                          	sig4-ga
+03 Umma III                                                                                            	sze-kar-ra-gal2-la
+03 Ur III                                                                                              	ses-da-gu7
+03 Ur III                                                                                              	szesz-da-gu7
+04 Umma IV                                                                                             	nesag2
+04 Ur IV                                                                                               	u5-bi2-gu7
+05 Girsu V                                                                                             	munu4-gu7
+05 Nippur V                                                                                            	NE-NE-gar
+05 Umma V                                                                                              	RI-dal
+05 Ur V                                                                                                	ki-sikil-{d}nin-a-zu
+06 Girsu VI                                                                                            	ezem-{d}dumu-zi
+06 Nippur VI                                                                                           	kin-{d}inanna
+06 Ur VI                                                                                               	ezem-{d}nin-a-zu
+07 Nippur VII                                                                                          	du6-ku3
+07 Umma (AS7-SzS2) VII                                                                                 	ezem-{d}amar-{d}suen
+07 Umma VII                                                                                            	min-esz3
+07 Ur VII                                                                                              	a2-ki-ti
+08 Girsu VIII                                                                                          	ezem-{d}ba-ba6
+08 Nippur VIII                                                                                         	apin-du8-a
+08 Umma VIII                                                                                           	e2-iti6
+08 Ur VIII                                                                                             	ezem-{d}szul-gi
+09 Girsu IX                                                                                            	mu-szu-du7
+09 Nippur IX                                                                                           	GAN-GAN-e3
+09 Ur IX                                                                                               	szu-esz-sza
+10 Girsu X                                                                                             	amar-a-a-si
+10 Nippur X                                                                                            	AB-e3
+10 Ur X                                                                                                	ezem-mah
+11 Nippur XI                                                                                           	ziz2-a
+11 Umma XI                                                                                             	pa4-u2-e
+11 Ur XI                                                                                               	ezem-an-na
+12 Drehem (SzS3) XII                                                                                   	diri ezem-me-ki-gal2
+12 Girsu XII                                                                                           	sze-il2-la
+12 Umma XII                                                                                            	{d}dumu-zi
+12 Ur XII                                                                                              	ezem-me-ki-gal2
+13 Ur XIII                                                                                             	diri
+?? Drehem (SzS3) VIII, (SzS3 - IS8) IX                                                                 	ezem-{d}szu-{d}suen
+?? Girsu IV, Nippur IV, Umma VI                                                                        	szu-numun
+?? Girsu VII, Umma (before Sz30) X                                                                     	UR
