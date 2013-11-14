@@ -25,12 +25,12 @@ public class Tablet
             throw new IllegalStateException();
     }
 
-    public void print() {
-        System.out.println(name);
-        System.out.println(lang);
-        System.out.println(object);
+    public void print(PrintStream output) {
+        output.println(name);
+        output.println(lang);
+        output.println(object);
         for (TabletSection t : sections) {
-            t.print();
+            t.print(output);
         }
     }
 
@@ -89,10 +89,10 @@ class TabletSection {
         this.lines = lines;
     }
 
-    public void print() {
-        System.out.println(title);
+    public void print(PrintStream output) {
+        output.println(title);
         for (int i = 0; i < lines.size(); ++i) {
-            System.out.format("%3d. %s%n", i + 1, lines.get(i));
+            output.format("%3d. %s%n", i + 1, lines.get(i));
         }
     }
 }

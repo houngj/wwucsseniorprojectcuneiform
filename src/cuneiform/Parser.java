@@ -10,8 +10,7 @@ public class Parser {
     public static final int    threadCount = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args)
-            throws IOException,
-            InterruptedException {
+            throws IOException, InterruptedException {
 
         BufferedReader reader = new BufferedReader(new FileReader(sourcePath));
         ParallelExtractor dateExtractor = new ParallelExtractor(reader);
@@ -21,6 +20,12 @@ public class Parser {
         try (PrintStream ps = new PrintStream("sorted.txt")) {
             dateExtractor.printStats(ps);
             dateExtractor.printSorted(ps);
+        }
+        try (PrintStream ps = new PrintStream("no-matches.txt")) {
+            dateExtractor.printUnmatched(ps);
+        }
+        try (PrintStream ps = new PrintStream("matched-names.txt")) {
+            dateExtractor.printNames(ps);
         }
         dateExtractor.printStats(System.out);
     }

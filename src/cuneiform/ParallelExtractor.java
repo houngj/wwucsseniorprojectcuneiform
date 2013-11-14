@@ -56,6 +56,18 @@ class ParallelExtractor
             t.printStats(output);
         }
     }
+    
+    public void printUnmatched(PrintStream output) {
+        for(Tablet t : tablets) {
+            if(t.foundMonth == null && t.foundYear == null) {
+                t.print(output);
+            }
+        }
+    }
+    
+    public void printNames(PrintStream output) {
+        nameExtractor.print(output);
+    }
 
     private Tablet getTablet() {
         try {
