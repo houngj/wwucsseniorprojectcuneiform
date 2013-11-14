@@ -18,7 +18,7 @@ class TabletFactory {
         return prevLine = reader.readLine();
     }
 
-    public Tablet build()
+    public synchronized Tablet build()
             throws IOException {
         // First line is name
         String name = (prevLine == null) ? getLine() : prevLine;

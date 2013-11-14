@@ -1,10 +1,9 @@
 package cuneiform;
 
-import java.util.List;
 import java.io.IOException;
 import java.io.PrintStream;
-
-import javax.jws.Oneway;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Tablet
         implements Comparable<Tablet> {
@@ -12,8 +11,9 @@ public class Tablet
     public final String              lang;
     public final String              object;
     public final List<TabletSection> sections;
-    public Confidence                monthConf;
-    public Confidence                yearConf;
+    public FoundDate                 foundMonth;
+    public FoundDate                 foundYear;
+    public final List<String>        names = new ArrayList<>();
 
     Tablet(String name, String lang, String object, List<TabletSection> sections)
             throws IOException {
@@ -34,48 +34,50 @@ public class Tablet
         }
     }
 
-    public void setMonth(Confidence conf) {
-        if (monthConf == null || monthConf.confidence < conf.confidence) {
-            this.monthConf = conf;
+    public void setMonth(FoundDate newMonth) {
+        if (foundMonth == null || newMonth.compareTo(foundMonth) > 0) {
+            foundMonth = newMonth;
         }
     }
 
-    public void setYear(Confidence conf) {
-        if (yearConf == null || yearConf.confidence < conf.confidence) {
-            this.yearConf = conf;
+    public void setYear(FoundDate newYear) {
+        if (foundYear == null || newYear.compareTo(foundYear) > 0) {
+            foundYear = newYear;
         }
+    }
+
+    public void addName(String name) {
+        names.add(name);
     }
 
     public void printStats(PrintStream output) {
-        output.format("%-15s %s%n", "NAME", name);
-        if (monthConf != null) {
-            output.format("%-15s %s%n", "MONTH SRC", monthConf.string);
-            output.format("%-15s %s%n", "MONTH TRANS", monthConf.date.transliteration);
-            output.format("%-15s %s%n", "MONTH CANON", monthConf.date.canonical);
-            output.format("%-15s %s%n", "MONTH DIST", monthConf.distance);
-            output.format("%-15s %s%n", "MONTH CONF", monthConf.confidence);
-        } else {
-            output.format("NO MONTH DATA%n");
+        output.format("%-27s %s%n", "name:", name);
+        output.println(" month data:");
+        if (foundMonth != null) {
+            foundMonth.printStats(output);
+
         }
-        if (yearConf != null) {
-            output.format("%-15s %s%n", "YEAR SRC", yearConf.string);
-            output.format("%-15s %s%n", "YEAR TRANS", yearConf.date.transliteration);
-            output.format("%-15s %s%n", "YEAR CANON", yearConf.date.canonical);
-            output.format("%-15s %s%n", "YEAR DIST", yearConf.distance);
-            output.format("%-15s %s%n", "YEAR CONF", yearConf.confidence);
-        } else {
-            output.format("NO YEAR DATA%n");
+        output.println(" year data:");
+        if (foundYear != null) {
+            foundYear.printStats(output);
+        }
+        output.println(" names:");
+        for (String n : names) {
+            output.format("  %s%n", n);
         }
         output.format("%n");
     }
 
     @Override
     public int compareTo(Tablet othe) {
-        double thisC = ((this.monthConf == null) ? (0) : (this.monthConf.confidence)) + ((this.yearConf == null) ? (0) : (this.yearConf.confidence));
-        double otheC = ((othe.monthConf == null) ? (0) : (othe.monthConf.confidence)) + ((othe.yearConf == null) ? (0) : (othe.yearConf.confidence));
-        return -Double.compare(thisC, otheC);
+        double thisC = ((this.foundMonth == null) ? (0) : (this.foundMonth.confidence.confidence)) + ((this.foundYear == null) ? (0) : (this.foundYear.confidence.confidence));
+        double otheC = ((othe.foundMonth == null) ? (0) : (othe.foundMonth.confidence.confidence)) + ((othe.foundYear == null) ? (0) : (othe.foundYear.confidence.confidence));
+        int rv1 = Double.compare(otheC, thisC);
+        if (rv1 != 0) return rv1;
+        int rv2 = Integer.compare(othe.names.size(), this.names.size());
+        if (rv2 != 0) return rv2;
+        return othe.name.compareTo(this.name);
     }
-
 }
 
 class TabletSection {
