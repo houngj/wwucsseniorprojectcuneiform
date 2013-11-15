@@ -70,6 +70,10 @@ public class Tablet
 
     @Override
     public int compareTo(Tablet othe) {
+        int rv = compare(this.foundYear, othe.foundYear);
+        if(rv != 0) return rv;
+        return compare(this.foundMonth, othe.foundMonth);
+        /*
         double thisC = ((this.foundMonth == null) ? (0) : (this.foundMonth.confidence.confidence)) + ((this.foundYear == null) ? (0) : (this.foundYear.confidence.confidence));
         double otheC = ((othe.foundMonth == null) ? (0) : (othe.foundMonth.confidence.confidence)) + ((othe.foundYear == null) ? (0) : (othe.foundYear.confidence.confidence));
         int rv1 = Double.compare(otheC, thisC);
@@ -77,6 +81,14 @@ public class Tablet
         int rv2 = Integer.compare(othe.names.size(), this.names.size());
         if (rv2 != 0) return rv2;
         return othe.name.compareTo(this.name);
+        */
+    }
+
+    private static int compare(FoundDate fd1, FoundDate fd2) {
+        if(fd1 == null && fd2 == null) return 0;
+        if(fd1 == null) return 1;
+        if(fd2 == null) return -1;
+        return -fd1.confidence.compareTo(fd2.confidence);
     }
 }
 

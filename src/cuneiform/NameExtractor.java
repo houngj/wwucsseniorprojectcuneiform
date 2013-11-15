@@ -33,6 +33,7 @@ public class NameExtractor {
     }
 
     public void print(PrintStream output) {
+        Collections.sort(names);
         for (Name name : names) {
             name.print(output);
             output.println();
@@ -63,7 +64,7 @@ public class NameExtractor {
     }
 }
 
-class Name {
+class Name implements Comparable<Name> {
     public final String        name;
     private final List<Tablet> tablets = new ArrayList<>();
 
@@ -95,5 +96,10 @@ class Name {
             if (year2 == null) return -1;
             return year1.compareTo(year2);
         }
+    }
+
+    @Override
+    public int compareTo(Name o) {
+        return -Integer.compare(tablets.size(), o.tablets.size());
     }
 }
