@@ -1,8 +1,8 @@
 package cuneiform.stringComparator;
 
 
-public class PhonemeLevenshteinComparator
-        implements StringComparator {
+public class GraphemeLevenshteinComparator
+        extends StringComparator {
     @Override
     public Confidence compare(String arg0, String arg1) {
         String[] str1 = arg0.split("-| ");
@@ -22,10 +22,5 @@ public class PhonemeLevenshteinComparator
         }
 
         return new Confidence(distance[str1.length][str2.length], str1.length, str2.length);
-    }
-
-    private static int minimum(int a, int b, int c) {
-        int t1 = (a < b) ? (a) : (b);
-        return (c < t1) ? (c) : (t1);
     }
 }

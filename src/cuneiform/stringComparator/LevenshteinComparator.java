@@ -2,7 +2,7 @@ package cuneiform.stringComparator;
 
 
 public class LevenshteinComparator
-        implements StringComparator {
+        extends StringComparator {
 
     @Override
     public Confidence compare(String str1, String str2) {
@@ -21,10 +21,5 @@ public class LevenshteinComparator
         }
 
         return new Confidence(distance[str1.length()][str2.length()], str1.length(), str2.length());
-    }
-
-    private static int minimum(int a, int b, int c) {
-        int t1 = (a < b) ? (a) : (b);
-        return (c < t1) ? (c) : (t1);
     }
 }
