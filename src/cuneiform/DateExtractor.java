@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cuneiform.stringComparator.Confidence;
-import cuneiform.stringComparator.GraphemeLevenshteinComparator;
 import cuneiform.stringComparator.StringComparator;
+import cuneiform.stringComparator.SumerianComparator;
 
 public class DateExtractor {
     public final List<KnownDate>  knownMonths;
     public final List<KnownDate>  knownYears;
-    public final StringComparator comparator = new GraphemeLevenshteinComparator();
+    public final StringComparator comparator = new SumerianComparator();
 
     public DateExtractor()
             throws FileNotFoundException {
