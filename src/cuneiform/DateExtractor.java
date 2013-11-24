@@ -38,8 +38,8 @@ public class DateExtractor {
     }
 
     public void process(Tablet t) {
-        final String yearStart = "mu ";
-        final String monthStart = "iti ";
+        final String yearStart = "mu";
+        final String monthStart = "iti";
         for (TabletSection s : t.sections) {
             for (String line : s.lines) {
                 int yearIndex = line.indexOf(yearStart);
