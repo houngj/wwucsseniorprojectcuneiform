@@ -83,6 +83,7 @@
 059 Szulgi 41           	us2-sa e2-puzur4-isz-{d}da-gan{ki} ba-du3-a mu us2-sa-a-bi
 060 Szulgi 42*          	us2-sa e2-puzur4-isz-{d}da-gan{ki} ba-du3-a mu us2-sa-a-ba mu us2-sa-a-bi
 060 Szulgi 42           	lugal-e sza-asz-ru-um{ki} mu-hul
+060 Szulgi 42??         	sza-asz-ru{ki} ba-hul
 061 Szulgi 43*          	us2-sa sza-asz-ru-um{ki} ba-hul
 061 Szulgi 43           	en-ubur-zi-an-na en-{d}nanna masz-e / masz2-e i3-pad3
 062 Szulgi 44*          	us2-sa en-{d}nanna masz-e / masz2-e i3-pad3
@@ -93,6 +94,7 @@
 064 Szulgi 45b          	si-mu-ru-um{ki} lu-lu-bu{ki} a-ra2 9-kam ba-hul
 065 Szulgi 46*          	us2-sa ur-bi2-lum{ki} ba-hul
 065 Szulgi 46           	{d}szul-gi nita kalag-ga lugal ur2i{ki}-ma lugal an ub-da limmu2-ba-ke4 ki-masz{ki} hu-ur5-ti{ki} u3 ma-da-bi u4 1-a mu-hul
+065 Szulgi 46??         	ki-masz{ki} ba-hul
 066 Szulgi 47a          	us2-sa ki-masz{ki} ba-hul
 066 Szulgi 47b          	{d}szul-gi nita kalag-ga lugal ur2i{ki}-ma lugal an ub-da limmu2-ba-ke4 4-ba-ke4 ki-masz{ki} hu-ur5-ti{ki} u3 ma-da-bi u4 1-a mu-hul-a mu us2-sa-bi
 067 Szulgi 48*          	us2-sa ki-masz{ki} ba-hul mu us2-sa-a-bi
@@ -101,8 +103,10 @@
 067 Szulgi 48c          	2-kam ha-ar-szi{ki} ba-hul
 068 Amar-Sin 1*         	us2-sa ha-ar-szi{ki} u3 ki-masz{ki} ba-hul
 068 Amar-Sin 1          	{d}amar-{d}en.zu lugal-am3
+068 Amar-Sin 1??        	{d}amar-{d}suen lugal
 069 Amar-Sin 2*         	us2-sa {d}amar-{d}en.zu lugal
 069 Amar-Sin 2          	{d}amar-{d}en.zu lugal-e ur-bi2-lum{ki} mu-hul
+069 Amar-Sin 2??        	{d}amar-{d}suen lugal-e ur-bi2-lum{ki} mu-hul
 070 Amar-Sin 3*         	us2-sa {d}amar-{d}en.zu lugal-e ur-bi2-lum{ki} mu-hul
 070 Amar-Sin 3          	{d}amar-{d}en.zu lugal-e {d}gu-za mah {d}en-lil2-la2 sza3 hul2-la in-dim2
 071 Amar-Sin 4*         	us2-sa {d}gu-za mah sza3 hul2-la {d}en-lil2-la2 ba-dim2
@@ -111,21 +115,27 @@
 071 Amar-Sin 4c         	en-{d}nanna {d}amar-{d}en.zu-ra-ki-ag2-an-na masz2-e i3-pad3
 072 Amar-Sin 5*         	us2-sa en-mah-gal-an-na en-{d}nanna ba-hun
 072 Amar-Sin 5          	en-unu6-gal-an-na / en-u3-nu-gal-an-na en-{d}inanna unug{ki}-ga ba-hun
+072 Amar-Sin 5??        	en-unu6-gal {d}inanna ba-hun
 073 Amar-Sin 6*         	us2-sa en-unu6-gal-an-na en-{d}inanna unug{ki}-ga ba-hun
 073 Amar-Sin 6          	{d}amar-{d}en.zu lugal-e sza-asz-ru-um{ki} a-ra2 2-kam u3 szu-ru-ud-hu-um{ki} mu-hul
 074 Amar-Sin 7*         	us2-sa sza-asz-ru-um{ki} ba-hul
 074 Amar-Sin 7          	{d}amar-{d}en.zu lugal-e bi2-tum-ra-bi2-um{ki} i3-ab-ru{ki} ma-da ma-da-bi u3 hu-uh2-nu-ri{ki} mu-hul
+074 Amar-Sin 7??         	hu-uh2-nu-ri{ki} ba-hul
 075 Amar-Sin 8*         	us2-sa hu-uh2-nu-ri{ki} ba-hul
 075 Amar-Sin 8a         	en-nun-gal-an-na en-nun-e-{d}amar-{d}en.zu ki-ag2 en eridu{ki} ba-hun
 075 Amar-Sin 8b         	en-nun-ne2-ki-ag2
+075 Amar-Sin 8??         	en eridu{ki} ba-hun
 076 Amar-Sin 9a*        	us2-sa en-nun-ne2-ki-ag2
 076 Amar-Sin 9b*        	us2-sa en eridu{ki} ba-hun-ga2
 076 Amar-Sin 9          	en-{d}nanna-{d}amar-{d}en.zu-ki-ag2-ra en-{d}nanna ga-esz{ki} kar-zi-da{ki}-ka a-ra2 3-kam ba-hun
 077 Szu-Suen 1*         	us2-sa en-{d}nanna kar-zi-da{ki}-ka ba-hun
 077 Szu-Suen 1          	{d}szu-{d}en.zu lugal-am3	
+077 Szu-Suen 1??        	{d}szu-{d}suen lugal
 078 Szu-Suen 2*         	us2-sa {d}szu-{d}en.zu lugal
 078 Szu-Suen 2          	{d}szu-{d}en.zu lugal ur2i{ki}-ma-ke4 ma2 dara3-abzu {d}en-ki in-dim2 mu-du8
+078 Szu-Suen 2??        	ma2 {d}en-ki ba-ab-du8
 079 Szu-Suen 3*         	us2-sa ma2 dara3-abzu {d}en-ki ba-ab-du8 ba-dim2
+079 Szu-Suen 3??         	si-ma-num2{ki} ba-hul
 079 Szu-Suen 3          	{d}szu-{d}en.zu lugal ur2i{ki}-ma-ke4 si-ma-num2{ki} mu-hul
 080 Szu-Suen 4*         	us2-sa {d}szu-{d}en.zu lugal ur2i{ki}-ma-ke4 si-ma-num2{ki} mu-hul
 080 Szu-Suen 4          	{d}szu-{d}en.zu lugal ur2i{ki}-ma-ke4 bad3 mar-tu mu-ri-iq ti-id-ni-im mu-du3
@@ -140,6 +150,7 @@
 085 Szu-Suen 9          	{d}szu-{d}en.zu lugal ur2i{ki}-ma-ke4 e2-{d}szara2 umma{ki}-ka mu-du3
 086 Ibbi-Sin 1*         	{d}i-bi2-{d}en.zu lugal ur2i{ki}-ma-ke4 e2-{d}szara2 umma{ki} mu-du3
 086 Ibbi-Sin 1          	{d}i-bi2-{d}en.zu lugal
+086 Ibbi-Sin 1??        	{d}i-bi2-{d}suen lugal
 087 Ibbi-Sin 2*         	us2-sa {d}i-bi2-{d}en.zu lugal
 087 Ibbi-Sin 2          	en-{d}inanna unug{ki} masz-e i3-pad3
 088 Ibbi-Sin 3*         	us2-sa en-{d}inanna unug{ki}-ga masz-e i3-pad3
