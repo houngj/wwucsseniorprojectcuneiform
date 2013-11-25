@@ -1,0 +1,373 @@
+55: A.AR (NP?)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+56: A-ar-ba-tal!(HU)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+107: A-ba-zi-(ga)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+429: Ad-di3-la-at see Ad-il6-lat
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+431: Ad-il6-lat see Ad-di3-la-at
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+569: AN-palil2 (IGI.ŠE3.DU)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+601: AN-palil (igi-du)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+702: Aš-te-ni-ib/p
+	Not handled: 	/	0x2f	Garbage detected.
+708: Aš7-ga = Šir-ga
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+727: B/pu-d/ṭi-x-[¸]
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+728: B/pu-du-ur2
+	Not handled: 	/	0x2f	Garbage detected.
+729: B/pu-li2/ni-ir-li2/ni
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+730: B/pu-su-e
+	Not handled: 	/	0x2f	Garbage detected.
+731: B/pu-ur-na-za-ah
+	Not handled: 	/	0x2f	Garbage detected.
+732: B/pu-ur-ni
+	Not handled: 	/	0x2f	Garbage detected.
+733: B/pur-na-ak-ki
+	Not handled: 	/	0x2f	Garbage detected.
+734: B/pur-na-ha-ia
+	Not handled: 	/	0x2f	Garbage detected.
+735: B/put-ri-za-lum
+	Not handled: 	/	0x2f	Garbage detected.
+1265: // DU
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+1346: [e¸-r]i-is-ti-ar (-or:-ti-si-tal)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	:	0x3a	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+1682: En-ni-il2
+	Not handled: 		0x10	Garbage detected.
+1686: En-nim-ma-da-<ad>
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+2214: Gu-uk-at-<ta?>
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+2293: Ha-an-du-(up-)pa-ra
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+2304: Ha-ar-b/pu-uk-ši
+	Not handled: 	/	0x2f	Garbage detected.
+2410: Har-b/pu-uk-ši
+	Not handled: 	/	0x2f	Garbage detected.
+2459: Hi-li/li2-iš
+	Not handled: 	/	0x2f	Garbage detected.
+2461: Hi-ša-ar/ri
+	Not handled: 	/	0x2f	Garbage detected.
+2463: ⌈hu¸⌉- Ši-ni-da-a-še
+	Not handled: 	⌈	0x2308	Garbage detected.
+	Not handled: 	⌉	0x2309	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+2464: Hu-(um-)ba-an
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+2465: Hu-b/pu-ul
+	Not handled: 	/	0x2f	Garbage detected.
+2466: Hu-b/pu-ul-si2-mu-ut
+	Not handled: 	/	0x2f	Garbage detected.
+2477: Hu-ba-ri2-ga/gu2
+	Not handled: 	/	0x2f	Garbage detected.
+2484: Hu-di(in-)na-pu
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+2534: Hu-ul-li2-bar , Hu-li/li2-bar
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	,	0x2c	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+2536: Hu-um-ba-na-pir/pi-ir
+	Not handled: 	/	0x2f	Garbage detected.
+2586: Hum/lum-ba-ru
+	Not handled: 	/	0x2f	Garbage detected.
+2587: Hum/lum-ba/ma
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+2588: Hum/lum-ba/ma-a
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+2589: Hum/lum-ka-ka
+	Not handled: 	/	0x2f	Garbage detected.
+2649: I-gi/gi4-ru¸ Mah
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+2650: I-gi4-ri¸ Mah
+	Not handled: 	 	0x20	Garbage detected.
+2652: I-gu-lum see I-qu-lum
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+2666: I-li2-ru(?!)-uh¸-rat¸
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+2681: I-ni-iš-tuh-<<x>>-hu-um
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+2702: I-šar-im.a Ka.si
+	Not handled: 	 	0x20	Garbage detected.
+2757: Ṣi/ze2-ri
+	Not handled: 	/	0x2f	Garbage detected.
+3203: It-ha/hi-pa2-tal
+	Not handled: 	/	0x2f	Garbage detected.
+3262: Kal/tan-la-ah
+	Not handled: 	/	0x2f	Garbage detected.
+3284: Kaxkar2-ka-ka / Bu3-ka-ka
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+3297: Ki-ik-li-pa-ta-al(-li-in)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+3314: Ki-ni-ki?/di?-ni
+	Not handled: 	/	0x2f	Garbage detected.
+3317: Ki-ri2-ip/pu-ul-me
+	Not handled: 	/	0x2f	Garbage detected.
+3334: Ku-(un-)na-am
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+3344: Ku-ki-ni-du10 , Ku-ki-ni/nig2-du/du10
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	,	0x2c	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+3419: Ku3-{d}Nin-ur4-<ra>
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+3453: Kwu876 I3-ra2-ra2
+	Not handled: 	 	0x20	Garbage detected.
+3455: La-(a-)ni
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+3485: La-ka-[  ]-en-e2-an-na
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+3530: {d}Lama see Ilum-dan
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+3587: Lu2-[  ]-kar-re
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+3600: Lu2-akkil = U4-ma2-nina{ki}
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+3746: Lu2-Gir2-su<ki>
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+3749: Lu2-gir3xkar2-da =
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+3779: Lu2-Hu-bi2-ru{ki} =
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+3844: Lu2-lal + Sar-bar-ra
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+4017: Lu2-tug2-mah = Lu2-nam2-mah
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+4026: Lu2-u4-ma2-Nina{ki} = Lu2-akkil
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+4232: Lugal-aša5-zi/gi
+	Not handled: 	/	0x2f	Garbage detected.
+4342: Lugal-Lagaš{ki} 
+	Not handled: 	 	0x20	Garbage detected.
+4396: Lugal-nam-bi/ga
+	Not handled: 	/	0x2f	Garbage detected.
+4543: Lugal-uru X Kar2{ki}
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+4605: Ma-aš-hu-un-tah/ta2-hi-li
+	Not handled: 	/	0x2f	Garbage detected.
+4613: Ma-da-na-aš/rum
+	Not handled: 	/	0x2f	Garbage detected.
+4664: Mar- Ma-ma-ad-[...]
+	Not handled: 	 	0x20	Garbage detected.
+4677: Mar/ma-ar-hu-ni
+	Not handled: 	/	0x2f	Garbage detected.
+4716: Me-{d}Nin-kar-<ra>-ak
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+4742: Mi-{d}Iškur (ṣilli-{d}Adad)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+4783: Mu-ur-ti¸-gaba (Cp. -ga-ba)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+4785: Mu-ur2-ti/ti¸-ga-ba
+	Not handled: 	/	0x2f	Garbage detected.
+4833: Na-gi-kal/tan
+	Not handled: 	/	0x2f	Garbage detected.
+5531: Nin9-ab-<ba>-ra
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+5624: Pi-pi (or Wa-wa)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+5628: Pi/wa-la-la
+	Not handled: 	/	0x2f	Garbage detected.
+5660: Pu/pu3-ša-am
+	Not handled: 	/	0x2f	Garbage detected.
+5764: Rîb-si/ši-mu-ut
+	Not handled: 	/	0x2f	Garbage detected.
+5777: {d}Sa/sa3/za-ar-da/ta2/ta-mu (or An-)
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+5813: Si-(im-)mu
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+5816: Si-an-ha(/kir?)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+5836: Si2-im-ti-"gusir"
+	Not handled: 	"	0x22	Garbage detected.
+	Not handled: 	"	0x22	Garbage detected.
+5840: Si4-zi-gi-en/in
+	Not handled: 	/	0x2f	Garbage detected.
+5844: Sig4 = Šix
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+5871: Sirara = U4-ma2-nin{ki}-tag
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+5950: Ṣilli-{d}Adad (mi-{d}Iškur)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6174: Ši-da-ag-gu2-gur / Še-da-ag-gu2-gu2
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+6179: [...] -ši-im-[...]
+	Not handled: 	 	0x20	Garbage detected.
+6180: Ši-im-ši-<la>-ah
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+6189: Ši-nu-uk-ki/ku
+	Not handled: 	/	0x2f	Garbage detected.
+6193: Šim (?copy Ab)-še-la-ah
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6199: Šir-ga = Aš7-ga
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+6201: Šix-bi2-li (šix = Sig4)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6224: Šu-da-bu-ni --> Šu-ta2-pu-1i]
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+6351: {d}Šu-ud-da [check]-nâṣir
+	Not handled: 	 	0x20	Garbage detected.
+6457: {d}Šul-pa-e3-šeš-{d}Utu-a Ds
+	Not handled: 	 	0x20	Garbage detected.
+6482: Ta2-hi-ip-pi-ta-al, Ta2-hi-ip-pi-ta (copy Ša)-al
+	Not handled: 	,	0x2c	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6489: Ta2-hu-ma/pa2-tal
+	Not handled: 	/	0x2f	Garbage detected.
+6550: Tup-ki-še-<i>n/niı
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	ı	0x131	Garbage detected.
+6572: U-na-ap<-še-en>?
+	Not handled: 	<	0x3c	Garbage detected.
+	Not handled: 	>	0x3e	Garbage detected.
+6576: U18(gišgal)-ba-a
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6619: U2-na-pa2-tal (text Hu)
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+6651: U3-ba-an/num2/lum
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	/	0x2f	Garbage detected.
+6677: U3/u18-ba-a
+	Not handled: 	/	0x2f	Garbage detected.
+6730: Ur-{d}[b]a/[m]a-da-[ti?]-⌈ na⌉¸
+	Not handled: 	/	0x2f	Garbage detected.
+	Not handled: 	⌈	0x2308	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	⌉	0x2309	Garbage detected.
+7105: Ur-nim-pa/ugula
+	Not handled: 	/	0x2f	Garbage detected.
+7172: Ur-ri-ib2/tum
+	Not handled: 	/	0x2f	Garbage detected.
+7356: Uš-bi-ku(? Text: Us-x-x-is)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	:	0x3a	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+7434: [Z]i-li-⌈ip⌉-ri
+	Not handled: 	⌈	0x2308	Garbage detected.
+	Not handled: 	⌉	0x2309	Garbage detected.
+7439: Za-a-na(-a)
+	Not handled: 	(	0x28	Garbage detected.
+	Not handled: 	)	0x29	Garbage detected.
+7511: Zi/si2-ik-na-at
+	Not handled: 	/	0x2f	Garbage detected.
+7512: Zi/si2-nu-gi
+	Not handled: 	/	0x2f	Garbage detected.
+7543: a-ne-ti-ta-nu = _A-pil-ti-da2-nu_
+	Not handled: 	 	0x20	Garbage detected.
+	Not handled: 	=	0x3d	Garbage detected.
+	Not handled: 	 	0x20	Garbage detected.
+
+121 of 7677 names must be corrected by hand.
