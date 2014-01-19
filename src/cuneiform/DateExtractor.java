@@ -10,6 +10,7 @@ import java.util.List;
 import cuneiform.stringComparator.Confidence;
 import cuneiform.stringComparator.StringComparator;
 import cuneiform.stringComparator.SumerianComparator;
+import java.sql.*;
 
 public class DateExtractor {
     public final List<KnownDate>  knownMonths;
@@ -37,9 +38,12 @@ public class DateExtractor {
         return output;
     }
 
-    public void process(Tablet t) {
+    public void process(Connection conn, Tablet t) {
         final String yearStart = "mu";
         final String monthStart = "iti";
+        
+        t.insert(conn);
+        
         for (TabletSection s : t.sections) {
             for (String line : s.lines) {
                 int yearIndex = line.indexOf(yearStart);
@@ -48,11 +52,21 @@ public class DateExtractor {
                     String substring = line.substring(monthIndex + monthStart.length()).trim();
                     FoundDate c = getConfidence(substring, knownMonths);
                     t.setMonth(c);
+                    
+                    // TODO: load KnownDates into memory so that we can relate found date
+                    // references to the best KnownDate match.
+                    
+                    s.insertMonth(conn, substring, c);
                 }
                 if (yearIndex != -1) {
                     String substring = line.substring(yearIndex + yearStart.length()).trim();
                     FoundDate c = getConfidence(substring, knownYears);
                     t.setYear(c);
+                    
+                    // TODO: load KnownDates into memory so that we can relate found date
+                    // references to the best KnownDate match.
+                    
+                    s.insertYear(conn, substring, c);
                 }
             }
         }

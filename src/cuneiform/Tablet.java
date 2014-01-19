@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.*;
 
 public class Tablet
         implements Comparable<Tablet> {
+	private int                      id;
     public final String              name;
     public final String              lang;
     public final String              object;
@@ -17,6 +19,7 @@ public class Tablet
 
     Tablet(String name, String lang, String object, List<TabletSection> sections)
             throws IOException {
+    	this.id   = 0;
         this.name = name;
         this.lang = lang;
         this.object = object;
@@ -34,6 +37,51 @@ public class Tablet
         }
     }
 
+    public void insert(Connection conn)
+    {
+    	Statement stmt;
+    	
+		try {
+			
+			stmt = conn.createStatement();
+			
+	    	this.insertTabletRecord(stmt);
+	    	
+	    	for (TabletSection section : this.sections) {
+	    		section.insert(stmt, this.id);
+	    	}
+	    	
+	    	stmt.close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    private void insertTabletRecord(Statement stmt) throws SQLException
+    {
+    	StringBuilder sb = new StringBuilder();
+    	
+    	sb.append("INSERT INTO `tablet` (`name`, `lang`) VALUES ");
+    	sb.append
+    	(
+    		String.format
+    		(
+    			" ('%s', '%s');",
+    			this.name.replace("'",  "\\'"),
+    			this.lang
+    		)
+    	);
+    	
+    	stmt.execute(sb.toString(), Statement.RETURN_GENERATED_KEYS);
+    	
+    	ResultSet rs = stmt.getGeneratedKeys();
+    	if ((rs != null) && (rs.next())) {
+    		this.id = rs.getInt(1);
+    	}
+    }
+    
     public void setMonth(FoundDate newMonth) {
         if (foundMonth == null || newMonth.compareTo(foundMonth) > 0) {
             foundMonth = newMonth;
@@ -93,10 +141,13 @@ public class Tablet
 }
 
 class TabletSection {
+	private int id;
+	
     public final String       title;
     public final List<String> lines;
 
     TabletSection(String title, List<String> lines) {
+    	this.id    = 0;
         this.title = title;
         this.lines = lines;
     }
@@ -106,5 +157,184 @@ class TabletSection {
         for (int i = 0; i < lines.size(); ++i) {
             output.format("%3d. %s%n", i + 1, lines.get(i));
         }
+    }
+    
+    public void insert(Statement stmt, int tabletID)
+    		throws SQLException
+    {
+    	int tabletSectionID = this.insertTabletSection(stmt, tabletID);
+    	
+    	for (String line : this.lines) {
+    		this.insertLine(stmt, tabletSectionID, line);
+    	}
+    }
+    
+    private int insertTabletSection(Statement stmt, int tabletID)
+    		throws SQLException {
+    	
+    	StringBuilder sb = new StringBuilder();
+    	
+    	String text = "";
+    	
+    	for (String line : this.lines) {
+    		text += (line.replace("'", "\\'") + " ");
+    	}
+    	
+    	Integer sectionType = this.getSectionType();
+    	
+    	sb.append("INSERT INTO `textsection` ");
+    	sb.append("(`tablet_id`, `textsectiontype_id`, `text`) VALUES ");
+    	sb.append
+    	(
+    		String.format
+    		(
+    			" ('%d', %s, '%s');",
+    			tabletID,
+    			(null != sectionType)
+    				? sectionType.toString()
+    				: "NULL",
+    			text
+    		)
+    	);
+    	
+    	stmt.execute(sb.toString(), Statement.RETURN_GENERATED_KEYS);
+    	
+    	ResultSet rs = stmt.getGeneratedKeys();
+    	if ((rs != null) && (rs.next())) {
+    		this.id = rs.getInt(1);
+    	}
+    	
+    	return this.id;
+    }
+    
+    private void insertLine(Statement stmt, int tabletSectionID, String line)
+    		throws SQLException
+    {
+    	StringBuilder sb = new StringBuilder();
+    	
+    	sb.append("INSERT INTO `line` ");
+    	sb.append("(`textsection_id`, `text`) VALUES ");
+    	sb.append
+    	(
+    		String.format
+    		(
+    			" (%d, '%s');",
+    			tabletSectionID,
+    			line.replace("'",  "\\'")
+    		)
+    	);
+    	
+    	stmt.execute(sb.toString());
+    }
+    
+    public void insertMonth(Connection conn, String text, FoundDate date)
+    {
+    	Statement stmt;
+    	
+		try {
+			
+			stmt = conn.createStatement();
+			
+			StringBuilder sb = new StringBuilder();
+			
+	    	sb.append("INSERT INTO `month_reference` ");
+	    	sb.append("(`textsection_id`, `text`, `confidence`) VALUES ");
+	    	sb.append
+	    	(
+	    		String.format
+	    		(
+		    		" (%d, '%s', %.3f);",
+		    		this.id,
+		    		text.replace("'",  "\\'"),
+		    		date.confidence.confidence / 100
+	    		)
+	    	);
+	    	
+	    	stmt.execute(sb.toString());
+	    	
+	    	stmt.close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public void insertYear(Connection conn, String text, FoundDate date)
+    {
+    	Statement stmt;
+    	
+		try {
+			
+			stmt = conn.createStatement();
+			
+			StringBuilder sb = new StringBuilder();
+			
+	    	sb.append("INSERT INTO `year_reference` ");
+	    	sb.append("(`textsection_id`, `text`, `confidence`) VALUES ");
+	    	sb.append
+	    	(
+	    		String.format
+	    		(
+	    			" (%d, '%s', %.3f);",
+	    			this.id,
+	    			text.replace("'",  "\\'"),
+	    			date.confidence.confidence / 100
+	    		)
+	    	);
+	    	
+	    	stmt.execute(sb.toString());
+	    	
+	    	stmt.close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    private Integer getSectionType() {
+    	
+    	if (this.title.startsWith("@seal")) {
+    		return 9;
+    	}
+    	
+    	switch (this.title.trim()) {
+    		case "@bottom":
+    			return 1;
+    			
+    		case "@bulla":
+    			return 2;
+    			
+    		case "@edge":
+    			return 3;
+    			
+    		case "@envelope":
+    			return 4;
+    			
+    		case "@left":
+    			return 5;
+    			
+    		case "@object":
+    			return 6;
+    			
+    		case "@obverse":
+    			return 7;
+    			
+    		case "@reverse":
+    			return 8;
+    			
+    		case "@seal":
+    			return 9;
+    			
+    		case "@tablet":
+    			return 10;
+    			
+    		case "@top":
+    			return 11;
+    			
+    		default:
+    			return null;
+    	}
     }
 }

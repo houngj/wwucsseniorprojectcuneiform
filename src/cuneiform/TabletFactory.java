@@ -9,7 +9,7 @@ class TabletFactory {
     private final BufferedReader reader;
     private String               prevLine = null;
 
-    public TabletFactory(BufferedReader reader) {
+	public TabletFactory(BufferedReader reader) {
         this.reader = reader;
     }
 
@@ -23,7 +23,10 @@ class TabletFactory {
         // First line is name
         String name = (prevLine == null) ? getLine() : prevLine;
         if (name == null) return null;
-        String lang = getLine(); // Second line is language;
+        
+        // Second line is language (TODO: usually)
+        // TODO: clean this up and parse out the lang properly.
+        String lang = getLine().replace("#atf lang:", "").trim();
 
         if (lang.charAt(0) != '#') {
             String line;
