@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.sql.*;
 
 class ParallelExtractor
         implements Runnable {
@@ -20,6 +21,10 @@ class ParallelExtractor
     private double              yearConf  = 0;
     private double              monthConf = 0;
 
+    private static final String DB_HOST = "jdbc:mysql://localhost/cuneiform";
+    private static final String DB_USER = "dingo";
+    private static final String DB_PASS = "hungry!";
+    
     public ParallelExtractor(BufferedReader reader)
             throws FileNotFoundException {
         dateExtractor = new DateExtractor();
@@ -79,22 +84,73 @@ class ParallelExtractor
 
     public void run() {
         Tablet t = null;
-        while ((t = getTablet()) != null) {
-            dateExtractor.process(t);
-            nameExtractor.process(t);
-            System.err.println(tablets.size());
-            synchronized (tablets) {
-                tablets.add(t);
+        Connection conn = null;
+        
+        try
+        {
+        	// Establish the database connection.
+        	// Although Connection objects should be thread-safe, let's give
+        	// each thread its own connection object.
+        	
+        	conn = getConnection();
+        	
+        	if (null != conn)
+        	{
+        		// We have a valid connection.  Let's go !
+        		
+                while ((t = getTablet()) != null) {
+                    dateExtractor.process(conn, t);
+                    nameExtractor.process(t);
+                    System.err.println(tablets.size());
+                    
+                    synchronized (tablets) {
+                        tablets.add(t);
 
-                if (t.foundMonth != null) {
-                    months++;
-                    monthConf += t.foundMonth.confidence.confidence;
+                        if (t.foundMonth != null) {
+                            months++;
+                            monthConf += t.foundMonth.confidence.confidence;
+                        }
+                        if (t.foundYear != null) {
+                            years++;
+                            yearConf += t.foundYear.confidence.confidence;
+                        }
+                    }
                 }
-                if (t.foundYear != null) {
-                    years++;
-                    yearConf += t.foundYear.confidence.confidence;
-                }
-            }
+        	}
         }
+        catch (SQLException e)
+        {
+        	// Something dreadful happened SQL-wise.
+        	
+        	System.out.println("Database access problem encountered: " + e.getMessage());
+        }
+        finally
+        {
+        	// If we still have a connection, close it out.
+        	// Our work here is done.
+        	
+        	if (null != conn)
+        	{
+        		// Ok, look.  It'd be nice just to be able to say conn.close()
+        		// here in the finally block, but that might throw, and the
+        		// Runnable interface doesn't let us throw checked exceptions.
+        		// Rather than do some serious voodoo, or, better yet, replace
+        		// the Runnable semantics with Callable<Void>, let's just sweep
+        		// this under the rug.
+        		// Move along, citizen.  Nothing to see here.
+        		
+        		try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+    }
+    
+    private static Connection getConnection() throws SQLException
+    {
+    	return DriverManager.getConnection(DB_HOST, DB_USER, DB_PASS);
     }
 }
