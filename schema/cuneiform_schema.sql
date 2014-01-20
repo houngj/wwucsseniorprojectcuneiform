@@ -1,12 +1,16 @@
+DROP SCHEMA `cuneiform`;
+
 CREATE SCHEMA `cuneiform`
 	DEFAULT CHARACTER SET latin1;
 
 USE `cuneiform`;
 
-/*
-	Create an user for populating and querying the schema.
-	Change username and password to fit your tastes.
-*/
+/* Drop the dingo user if it already exists. */
+
+GRANT USAGE ON *.* TO 'dingo'@'localhost';
+DROP USER 'dingo'@'localhost';
+
+/* Recreate the dingo user. */
 
 CREATE USER 'dingo'@'localhost' IDENTIFIED BY 'hungry!';
 GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost';
@@ -66,7 +70,7 @@ CREATE TABLE `textsection`
 /*
 	There's a lot of garbage in the @ comments that indicate the source
 	of the text:
-		cat ur3_20110805_public.atf | grep ^@ | sort | uniq
+		cat ur3_20140114_public.atf | grep ^@ | sort | uniq
 	We shouldn't support them all, so for now we'll just allow `textsectiontype_id`
 	to be NULL if it's from a source we don't care to implement yet.
 */
@@ -432,11 +436,9 @@ CREATE TABLE `month_reference`
 	`textsection_id`
 		INT
 		NOT NULL,
-/*	
 	`canonical_month_id`
 		INT
 		NOT NULL,
-*/
 	`text`
 		NVARCHAR(270)
 		NOT NULL,
@@ -450,11 +452,9 @@ CREATE TABLE `month_reference`
 		DEFAULT false,
 
 	FOREIGN KEY (`textsection_id`)
-		REFERENCES `textsection` (`id`)
-/*
+		REFERENCES `textsection` (`id`),
 	FOREIGN KEY (`canonical_month_id`)
 		REFERENCES `canonical_month` (`id`)
-*/
 );
 
 CREATE TABLE `year_reference`
@@ -467,11 +467,9 @@ CREATE TABLE `year_reference`
 	`textsection_id`
 		INT
 		NOT NULL,
-/*
 	`canonical_year_id`
 		INT
 		NOT NULL,
-*/
 	`text`
 		NVARCHAR(270)
 		NOT NULL,
@@ -484,11 +482,9 @@ CREATE TABLE `year_reference`
 		DEFAULT false,
 
 	FOREIGN KEY (`textsection_id`)
-		REFERENCES `textsection` (`id`)
-/*
+		REFERENCES `textsection` (`id`),
 	FOREIGN KEY (`canonical_year_id`)
 		REFERENCES `canonical_year` (`id`)
-*/
 );
 
 -- references to deities
