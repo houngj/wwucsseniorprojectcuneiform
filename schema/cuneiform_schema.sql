@@ -1,25 +1,19 @@
-DROP SCHEMA `cuneiform`;
+DROP SCHEMA IF EXISTS `cuneiform`;
 
 CREATE SCHEMA `cuneiform`
 	DEFAULT CHARACTER SET latin1;
 
 USE `cuneiform`;
 
-/* Drop the dingo user if it already exists. */
+/* Create the dingo user, if it doesn't exist*/
 
-GRANT USAGE ON *.* TO 'dingo'@'localhost';
-DROP USER 'dingo'@'localhost';
-
-/* Recreate the dingo user. */
-
-CREATE USER 'dingo'@'localhost' IDENTIFIED BY 'hungry!';
-GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost';
+GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost'  IDENTIFIED BY 'hungry!';
 
 /* Create tables. */
 
 CREATE TABLE `tablet`
 (
-	`id`
+	`tablet_id`
 		INT
 		PRIMARY KEY
 		NOT NULL AUTO_INCREMENT,
@@ -33,9 +27,9 @@ CREATE TABLE `tablet`
 		DEFAULT 'sux'		-- Default: sumerian (sux)
 );
 
-CREATE TABLE `textsectiontype`
+CREATE TABLE `text_section_type`
 (
-	`id`
+	`text_section_type_id`
 		INT
 		PRIMARY KEY
 		NOT NULL,
@@ -44,21 +38,21 @@ CREATE TABLE `textsectiontype`
 		NOT NULL
 );
 
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 1, 'Bottom');    -- @bottom
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 2, 'Bulla');     -- @bulla
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 3, 'Edge');      -- @edge
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 4, 'Envelope');  -- @envelope
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 5, 'Left');      -- @left
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 6, 'Object');    -- @object
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 7, 'Obverse');   -- @obverse
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 8, 'Reverse');   -- @reverse
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES ( 9, 'Seal');      -- @seal
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES (10, 'Tablet');    -- @tablet
-INSERT INTO `textsectiontype` (`id`, `name`) VALUES (11, 'Top');       -- @top
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 1, 'Bottom');   -- @bottom
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 2, 'Bulla');    -- @bulla
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 3, 'Edge');     -- @edge
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 4, 'Envelope'); -- @envelope
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 5, 'Left');     -- @left
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 6, 'Object');   -- @object
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 7, 'Obverse');  -- @obverse
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 8, 'Reverse');  -- @reverse
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 9, 'Seal');     -- @seal
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES (10, 'Tablet');   -- @tablet
+INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES (11, 'Top');      -- @top
 
-CREATE TABLE `textsection`
+CREATE TABLE `text_section`
 (
-	`id`
+	`text_section_id`
 		INT
 		PRIMARY KEY
 		NOT NULL
@@ -75,7 +69,7 @@ CREATE TABLE `textsection`
 	to be NULL if it's from a source we don't care to implement yet.
 */
 
-	`textsectiontype_id`
+	`text_section_type_id`
 		INT
 		NULL,
 
@@ -93,19 +87,19 @@ CREATE TABLE `textsection`
 		DEFAULT '',
 
 	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`id`),
-	FOREIGN KEY (`textsectiontype_id`)
-		REFERENCES `textsectiontype` (`id`)
+		REFERENCES `tablet` (`tablet_id`),
+	FOREIGN KEY (`text_section_type_id`)
+		REFERENCES `text_section_type` (`text_section_type_id`)
 );
 
 CREATE TABLE `line`
 (
-	`id`
+	`line_id`
 		INT
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	`textsection_id`
+	`text_section_id`
 		INT
 		NOT NULL,
 	`text`
@@ -119,13 +113,13 @@ CREATE TABLE `line`
 		NULL
 		DEFAULT '',
 
-	FOREIGN KEY (`textsection_id`)
-		REFERENCES `textsection` (`id`)
+	FOREIGN KEY (`text_section_id`)
+		REFERENCES `text_section` (`text_section_id`)
 );
 
 CREATE TABLE `canonical_month`
 (
-	`id`
+	`canonical_month_id`
 		INT
 		PRIMARY KEY
 		NOT NULL
@@ -173,27 +167,27 @@ INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('nesag2', 4, 'Umma');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('u5-bi2-gu7', 4, 'Umma');                                    	
+	VALUES ('u5-bi2-gu7', 4, 'Umma');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('munu4-gu7', 5, 'Girsu');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('NE-NE-gar', 5, 'Nippur');    
+	VALUES ('NE-NE-gar', 5, 'Nippur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('RI-dal', 5, 'Umma');    
+	VALUES ('RI-dal', 5, 'Umma');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ki-sikil-{d}nin-a-zu', 5, 'Ur'); 
+	VALUES ('ki-sikil-{d}nin-a-zu', 5, 'Ur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}dumu-zi', 6, 'Girsu'); 
+	VALUES ('ezem-{d}dumu-zi', 6, 'Girsu');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('kin-{d}inanna', 6, 'Nippur'); 
+	VALUES ('kin-{d}inanna', 6, 'Nippur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('ezem-{d}nin-a-zu', 6, 'Ur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('du6-ku3', 7, 'Nippur'); 
+	VALUES ('du6-ku3', 7, 'Nippur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
 	VALUES ('ezem-{d}amar-{d}suen', 7, 'Umma', 'from AS7 to SzS2');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('min-esz3', 7, 'Umma'); 
+	VALUES ('min-esz3', 7, 'Umma');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('a2-ki-ti', 7, 'Ur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
@@ -201,9 +195,9 @@ INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('apin-du8-a', 8, 'Nippur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('e2-iti6', 8, 'Umma');																			
+	VALUES ('e2-iti6', 8, 'Umma');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}szul-gi', 8, 'Ur');	                                                                                  	                                                                                      	
+	VALUES ('ezem-{d}szul-gi', 8, 'Ur');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
 	VALUES ('mu-szu-du7', 9, 'Girsu');
 INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
@@ -241,7 +235,7 @@ INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
 
 CREATE TABLE `canonical_year`
 (
-	`id`
+	`canonical_year_id`
 		INT
 		PRIMARY KEY
 		NOT NULL AUTO_INCREMENT,
@@ -428,12 +422,12 @@ INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('e2-{d}ne3-unug ba
 
 CREATE TABLE `month_reference`
 (
-	`id`
+	`month_reference_id`
 		INT
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	`textsection_id`
+	`text_section_id`
 		INT
 		NOT NULL,
 	`canonical_month_id`
@@ -451,20 +445,20 @@ CREATE TABLE `month_reference`
 		NOT NULL
 		DEFAULT false,
 
-	FOREIGN KEY (`textsection_id`)
-		REFERENCES `textsection` (`id`),
+	FOREIGN KEY (`text_section_id`)
+		REFERENCES `text_section` (`text_section_id`),
 	FOREIGN KEY (`canonical_month_id`)
-		REFERENCES `canonical_month` (`id`)
+		REFERENCES `canonical_month` (`canonical_month_id`)
 );
 
 CREATE TABLE `year_reference`
 (
-	`id`
+	`year_reference_id`
 		INT
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	`textsection_id`
+	`text_section_id`
 		INT
 		NOT NULL,
 	`canonical_year_id`
@@ -481,10 +475,10 @@ CREATE TABLE `year_reference`
 		NOT NULL
 		DEFAULT false,
 
-	FOREIGN KEY (`textsection_id`)
-		REFERENCES `textsection` (`id`),
+	FOREIGN KEY (`text_section_id`)
+		REFERENCES `text_section` (`text_section_id`),
 	FOREIGN KEY (`canonical_year_id`)
-		REFERENCES `canonical_year` (`id`)
+		REFERENCES `canonical_year` (`canonical_year_id`)
 );
 
 -- references to deities
