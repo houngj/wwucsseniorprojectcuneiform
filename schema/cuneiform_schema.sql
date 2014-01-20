@@ -481,6 +481,38 @@ CREATE TABLE `year_reference`
 		REFERENCES `canonical_year` (`canonical_year_id`)
 );
 
+CREATE TABLE `search_term`
+(
+	`search_term_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`term`
+		VARCHAR(100)
+		NOT NULL
+);
+
+CREATE TABLE `search_index`
+(
+	`search_index_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`tablet_id`
+		INT
+		NOT NULL,
+	`search_term_id`
+		INT 
+		NOT NULL,
+	
+	FOREIGN KEY (`tablet_id`)
+		REFERENCES `tablet` (`tablet_id`),
+	FOREIGN KEY (`search_term_id`)
+		REFERENCES `search_term` (`search_term_id`)
+);
+
 -- references to deities
 -- codifying damage to tablets
 -- transaction table
