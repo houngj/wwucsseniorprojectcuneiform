@@ -15,17 +15,27 @@ class TabletFactory {
 
     private String getLine()
             throws IOException {
-        return prevLine = reader.readLine();
+        prevLine = reader.readLine();
+        if(prevLine != null) {
+            prevLine = prevLine.trim();
+        }
+        return prevLine;
     }
 
     public synchronized Tablet build()
             throws IOException {
         String name = null;
         String lang = null;
-
         String line = (prevLine == null) ? getLine() : prevLine;
+
+        if (line == null) {
+            return null;
+        }
+
         do {
-            if (line.charAt(0) == '&') {
+            if (line.isEmpty()) {
+                continue;
+            } else if (line.charAt(0) == '&') {
                 assert (name == null);
                 name = line;
             } else if (line.startsWith("#atf: lang")) {
@@ -35,8 +45,6 @@ class TabletFactory {
                 break;
             }
         } while ((line = getLine()) != null);
-
-        if (name == null) return null;
 
         List<TabletSection> sections = new ArrayList<>();
 
@@ -58,7 +66,9 @@ class TabletFactory {
 
         String line;
         while ((line = getLine()) != null) {
-            if (line.charAt(0) == '@' || line.charAt(0) == '&') {
+            if (line.isEmpty()) {
+                continue;
+            } else if (line.charAt(0) == '@' || line.charAt(0) == '&') {
                 break;
             } else if (ignoreLine(line) == false) {
                 lines.add(stripLineNumber(line));
