@@ -20,35 +20,32 @@ class TabletFactory {
 
     public synchronized Tablet build()
             throws IOException {
-        // First line is name
-        String name = (prevLine == null) ? getLine() : prevLine;
+        String name = null;
+        String lang = null;
+
+        String line = (prevLine == null) ? getLine() : prevLine;
+        do {
+            if (line.charAt(0) == '&') {
+                assert (name == null);
+                name = line;
+            } else if (line.startsWith("#atf: lang")) {
+                assert (lang == null);
+                lang = line.replace("#atf: lang", "").trim();
+            } else if (line.charAt(0) == '@') {
+                break;
+            }
+        } while ((line = getLine()) != null);
+
         if (name == null) return null;
-        
-        // Second line is language (TODO: usually)
-        // TODO: clean this up and parse out the lang properly.
-        String lang = getLine().replace("#atf lang:", "").trim();
 
-        if (lang.charAt(0) != '#') {
-            String line;
-            do {
-                line = getLine();
-            } while (line.charAt(0) != '&');
-            return build();
-        }
-
-        String object = getLine(); // Third line is the object type;
-        while (object.charAt(0) == '#') {
-            object = getLine();
-        }
         List<TabletSection> sections = new ArrayList<>();
 
-        {
-            TabletSection sect = null;
-            while ((sect = buildSection()) != null) {
-                sections.add(sect);
-            }
+        TabletSection sect = null;
+        while ((sect = buildSection()) != null) {
+            sections.add(sect);
         }
-        return new Tablet(name, lang, object, sections);
+
+        return new Tablet(name, lang, null, sections);
     }
 
     private TabletSection buildSection()
