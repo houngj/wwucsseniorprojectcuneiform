@@ -238,13 +238,14 @@ class TabletSection {
 			StringBuilder sb = new StringBuilder();
 			
 	    	sb.append("INSERT INTO `month_reference` ");
-	    	sb.append("(`textsection_id`, `text`, `confidence`) VALUES ");
+	    	sb.append("(`textsection_id`, `canonical_month_id`, `text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format
 	    		(
-		    		" (%d, '%s', %.3f);",
+		    		" (%d, %d, '%s', %.3f);",
 		    		this.id,
+		    		date.getKnownDate().id,
 		    		text.replace("'",  "\\'"),
 		    		date.confidence.confidence / 100
 	    		)
@@ -271,13 +272,14 @@ class TabletSection {
 			StringBuilder sb = new StringBuilder();
 			
 	    	sb.append("INSERT INTO `year_reference` ");
-	    	sb.append("(`textsection_id`, `text`, `confidence`) VALUES ");
+	    	sb.append("(`textsection_id`, `canonical_year_id`, `text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format
 	    		(
-	    			" (%d, '%s', %.3f);",
+	    			" (%d, %d, '%s', %.3f);",
 	    			this.id,
+	    			date.getKnownDate().id,
 	    			text.replace("'",  "\\'"),
 	    			date.confidence.confidence / 100
 	    		)

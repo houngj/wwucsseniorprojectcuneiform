@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 public class Parser {
-    public static final String sourcePath  = "ur3_20110805_public.atf";
+    public static final String sourcePath  = "./data/ur3_20140114_public.atf";
     public static final int    threadCount = Runtime.getRuntime().availableProcessors();
 
     public static void main(String[] args)

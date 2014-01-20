@@ -5,18 +5,20 @@ import java.io.PrintStream;
 import cuneiform.stringComparator.Confidence;
 
 class KnownDate {
-    public final String transliteration;
-    public final String canonical;
-
-    public KnownDate(String line) {
-        String[] parts = line.split("\t");
-        transliteration = parts[1].trim();
-        canonical = parts[0].trim();
+	public final int    id;
+    public final String text;
+    
+    public KnownDate(int id, String text) {
+    	this.id = id;
+    	this.text = text;
     }
-
-    public KnownDate(String trans, String canon) {
-        this.transliteration = trans;
-        this.canonical = canon;
+    
+    public int getID() {
+    	return this.id;
+    }
+    
+    public String getText() {
+    	return this.text;
     }
 }
 
@@ -34,12 +36,16 @@ class FoundDate
 
     public void printStats(PrintStream output) {
         output.format("  %-25s %s%n",      "found value",             foundDate);
-        output.format("  %-25s %s%n",      "matched transliteration", date.transliteration);
-        output.format("  %-25s %s%n",      "matched canonical name",  date.canonical);
+        output.format("  %-25s %s%n",      "matched transliteration", date.getText());
+//      output.format("  %-25s %s%n",      "matched canonical name",  date.canonical);
         output.format("  %-25s %d%n",      "levenshtein distance",    confidence.distance);
         output.format("  %-25s %3.2f%%%n", "confidence",              confidence.confidence);
     }
 
+    public KnownDate getKnownDate() {
+    	return this.date;
+    }
+    
     @Override
     public int compareTo(FoundDate o) {
         return confidence.compareTo(o.confidence);

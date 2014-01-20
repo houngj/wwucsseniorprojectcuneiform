@@ -1,7 +1,6 @@
 package cuneiform;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -11,11 +10,11 @@ import java.sql.*;
 
 class ParallelExtractor
         implements Runnable {
-    private final DateExtractor dateExtractor;
     private final NameExtractor nameExtractor;
     private final TabletFactory factory;
     private final List<Tablet>  tablets   = new ArrayList<>();
     private Thread[]            threads;
+    private DateExtractor       dateExtractor;
     private int                 years     = 0;
     private int                 months    = 0;
     private double              yearConf  = 0;
@@ -25,11 +24,9 @@ class ParallelExtractor
     private static final String DB_USER = "dingo";
     private static final String DB_PASS = "hungry!";
     
-    public ParallelExtractor(BufferedReader reader)
-            throws FileNotFoundException {
-        dateExtractor = new DateExtractor();
-        nameExtractor = new NameExtractor();
-        factory = new TabletFactory(reader);
+    public ParallelExtractor(BufferedReader reader) {
+    	this.factory = new TabletFactory(reader);
+    	this.nameExtractor = new NameExtractor();
     }
 
     public void spawnThreads(int numThreads) {
@@ -98,6 +95,8 @@ class ParallelExtractor
         	{
         		// We have a valid connection.  Let's go !
         		
+                this.dateExtractor = new DateExtractor(conn);
+                
                 while ((t = getTablet()) != null) {
                     dateExtractor.process(conn, t);
                     nameExtractor.process(t);

@@ -13,7 +13,7 @@ public class NameExtractor {
     private final List<Name> names;
 
     public NameExtractor() {
-        names = readNames("names.txt");
+        names = readNames("./data/names.txt");
     }
 
     private List<Name> readNames(String path) {
@@ -80,8 +80,8 @@ class Name implements Comparable<Name> {
         Collections.sort(tablets, new TabletComparator());
         output.format("name: %-20s appearing in %d tablets%n", name, tablets.size());
         for (Tablet t : tablets) {
-            String month = (t.foundMonth == null) ? ("") : (t.foundMonth.date.canonical);
-            String year  = (t.foundYear  == null) ? ("") : (t.foundYear.date.canonical);
+            String month = (t.foundMonth == null) ? ("") : (t.foundMonth.date.getText());
+            String year  = (t.foundYear  == null) ? ("") : (t.foundYear.date.getText());
             output.format("  %-40s\t%-20s\t%s%n", t.name, year, month);
         }
     }
@@ -89,8 +89,8 @@ class Name implements Comparable<Name> {
     static class TabletComparator
             implements Comparator<Tablet> {
         public int compare(Tablet o1, Tablet o2) {
-            String year1 = (o1.foundYear != null) ? (o1.foundYear.date.canonical) : (null);
-            String year2 = (o2.foundYear != null) ? (o2.foundYear.date.canonical) : (null);
+            String year1 = (o1.foundYear != null) ? (o1.foundYear.date.getText()) : (null);
+            String year2 = (o2.foundYear != null) ? (o2.foundYear.date.getText()) : (null);
             if (year1 == null && year2 == null) return 0;
             if (year1 == null) return 1;
             if (year2 == null) return -1;
