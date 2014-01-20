@@ -1,9 +1,5 @@
 package cuneiform;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +13,12 @@ public class DateExtractor {
     public final List<KnownDate>  knownYears;
     public final StringComparator comparator = new SumerianComparator();
 
-    public DateExtractor()
-            throws FileNotFoundException {
-        knownMonths = readKnownDates("months.txt");
-        knownYears  = readKnownDates("years.txt");
+    public DateExtractor(Connection conn) {
+        this.knownMonths = readKnownMonths(conn);
+        this.knownYears  = readKnownYears(conn);
     }
 
+/*
     private List<KnownDate> readKnownDates(String path) {
         List<KnownDate> output = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
@@ -37,7 +33,72 @@ public class DateExtractor {
         }
         return output;
     }
+*/
 
+	private List<KnownDate> readKnownMonths(Connection conn) {
+		
+		List<KnownDate> months = new ArrayList<KnownDate>();
+		
+    	Statement stmt;
+    	
+		try {
+			
+			stmt = conn.createStatement();
+			
+			stmt.execute("SELECT `id`, `text` FROM `canonical_month`;");
+	    	
+	    	ResultSet rs = stmt.getResultSet();
+	    	
+	    	if (null != rs) {
+	    		while(rs.next()) {
+	    			int id = rs.getInt("id");
+	    			String text = rs.getString("text");
+	    			
+	    			months.add(new KnownDate(id, text));
+	    		}
+	    	}
+	    	stmt.close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return months;
+	}
+
+	private List<KnownDate> readKnownYears(Connection conn) {
+		
+		List<KnownDate> years = new ArrayList<KnownDate>();
+		
+		Statement stmt;
+    	
+		try {
+			
+			stmt = conn.createStatement();
+			
+			stmt.execute("SELECT `id`, `text` FROM `canonical_year`;");
+	    	
+	    	ResultSet rs = stmt.getResultSet();
+	    	
+	    	if (null != rs) {
+	    		while(rs.next()) {
+	    			int id = rs.getInt("id");
+	    			String text = rs.getString("text");
+	    			
+	    			years.add(new KnownDate(id, text));
+	    		}
+	    	}
+	    	stmt.close();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return years;
+	}
+	
     public void process(Connection conn, Tablet t) {
         final String yearStart = "mu";
         final String monthStart = "iti";
@@ -76,7 +137,7 @@ public class DateExtractor {
         KnownDate guess = null;
         Confidence conf = new Confidence(Integer.MAX_VALUE, -1);
         for (KnownDate d : dates) {
-            Confidence newConf = comparator.compare(d.transliteration, substring);
+            Confidence newConf = comparator.compare(d.getText(), substring);
             if (newConf.compareTo(conf) > 0) {
                 conf = newConf;
                 guess = d;
