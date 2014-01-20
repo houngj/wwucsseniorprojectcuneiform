@@ -182,8 +182,8 @@ class TabletSection {
     	
     	Integer sectionType = this.getSectionType();
     	
-    	sb.append("INSERT INTO `textsection` ");
-    	sb.append("(`tablet_id`, `textsectiontype_id`, `text`) VALUES ");
+        sb.append("INSERT INTO `text_section` ");
+        sb.append("(`tablet_id`, `text_section_type_id`, `text`) VALUES ");
     	sb.append
     	(
     		String.format
@@ -213,7 +213,7 @@ class TabletSection {
     	StringBuilder sb = new StringBuilder();
     	
     	sb.append("INSERT INTO `line` ");
-    	sb.append("(`textsection_id`, `text`) VALUES ");
+        sb.append("(`text_section_id`, `text`) VALUES ");
     	sb.append
     	(
     		String.format
@@ -238,7 +238,7 @@ class TabletSection {
 			StringBuilder sb = new StringBuilder();
 			
 	    	sb.append("INSERT INTO `month_reference` ");
-	    	sb.append("(`textsection_id`, `canonical_month_id`, `text`, `confidence`) VALUES ");
+            sb.append("(`text_section_id`, `canonical_month_id`, `text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format
@@ -271,8 +271,8 @@ class TabletSection {
 			
 			StringBuilder sb = new StringBuilder();
 			
-	    	sb.append("INSERT INTO `year_reference` ");
-	    	sb.append("(`textsection_id`, `canonical_year_id`, `text`, `confidence`) VALUES ");
+            sb.append("INSERT INTO `year_reference` ");
+            sb.append("(`text_section_id`, `canonical_year_id`, `text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format

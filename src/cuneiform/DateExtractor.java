@@ -45,13 +45,13 @@ public class DateExtractor {
 			
 			stmt = conn.createStatement();
 			
-			stmt.execute("SELECT `id`, `text` FROM `canonical_month`;");
+			stmt.execute("SELECT `canonical_month_id`, `text` FROM `canonical_month`;");
 	    	
 	    	ResultSet rs = stmt.getResultSet();
 	    	
 	    	if (null != rs) {
 	    		while(rs.next()) {
-	    			int id = rs.getInt("id");
+                    int id = rs.getInt("canonical_month_id");
 	    			String text = rs.getString("text");
 	    			
 	    			months.add(new KnownDate(id, text));
@@ -77,13 +77,13 @@ public class DateExtractor {
 			
 			stmt = conn.createStatement();
 			
-			stmt.execute("SELECT `id`, `text` FROM `canonical_year`;");
+			stmt.execute("SELECT `canonical_year_id`, `text` FROM `canonical_year`;");
 	    	
 	    	ResultSet rs = stmt.getResultSet();
 	    	
 	    	if (null != rs) {
 	    		while(rs.next()) {
-	    			int id = rs.getInt("id");
+                    int id = rs.getInt("canonical_year_id");
 	    			String text = rs.getString("text");
 	    			
 	    			years.add(new KnownDate(id, text));
