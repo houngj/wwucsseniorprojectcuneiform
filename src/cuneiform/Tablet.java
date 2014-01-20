@@ -39,19 +39,12 @@ public class Tablet
 
     public void insert(Connection conn)
     {
-    	Statement stmt;
-    	
-		try {
-			
-			stmt = conn.createStatement();
-			
+		try (Statement stmt = conn.createStatement()) {
 	    	this.insertTabletRecord(stmt);
 	    	
 	    	for (TabletSection section : this.sections) {
 	    		section.insert(stmt, this.id);
 	    	}
-	    	
-	    	stmt.close();
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -229,15 +222,10 @@ class TabletSection {
     
     public void insertMonth(Connection conn, String text, FoundDate date)
     {
-    	Statement stmt;
-    	
-		try {
-			
-			stmt = conn.createStatement();
-			
-			StringBuilder sb = new StringBuilder();
-			
-	    	sb.append("INSERT INTO `month_reference` ");
+        try (Statement stmt = conn.createStatement()) {
+            StringBuilder sb = new StringBuilder();
+
+            sb.append("INSERT INTO `month_reference` ");
             sb.append("(`text_section_id`, `canonical_month_id`, `text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
@@ -252,8 +240,6 @@ class TabletSection {
 	    	);
 	    	
 	    	stmt.execute(sb.toString());
-	    	
-	    	stmt.close();
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -263,13 +249,8 @@ class TabletSection {
     
     public void insertYear(Connection conn, String text, FoundDate date)
     {
-    	Statement stmt;
-    	
-		try {
-			
-			stmt = conn.createStatement();
-			
-			StringBuilder sb = new StringBuilder();
+        try (Statement stmt = conn.createStatement()) {
+            StringBuilder sb = new StringBuilder();
 			
             sb.append("INSERT INTO `year_reference` ");
             sb.append("(`text_section_id`, `canonical_year_id`, `text`, `confidence`) VALUES ");
@@ -286,8 +267,6 @@ class TabletSection {
 	    	);
 	    	
 	    	stmt.execute(sb.toString());
-	    	
-	    	stmt.close();
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block

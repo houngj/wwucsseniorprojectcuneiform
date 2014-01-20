@@ -39,13 +39,8 @@ public class DateExtractor {
 		
 		List<KnownDate> months = new ArrayList<KnownDate>();
 		
-    	Statement stmt;
-    	
-		try {
-			
-			stmt = conn.createStatement();
-			
-			stmt.execute("SELECT `canonical_month_id`, `text` FROM `canonical_month`;");
+		try (Statement stmt = conn.createStatement()) {
+		    stmt.execute("SELECT `canonical_month_id`, `text` FROM `canonical_month`;");
 	    	
 	    	ResultSet rs = stmt.getResultSet();
 	    	
@@ -57,7 +52,6 @@ public class DateExtractor {
 	    			months.add(new KnownDate(id, text));
 	    		}
 	    	}
-	    	stmt.close();
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -70,13 +64,8 @@ public class DateExtractor {
 	private List<KnownDate> readKnownYears(Connection conn) {
 		
 		List<KnownDate> years = new ArrayList<KnownDate>();
-		
-		Statement stmt;
     	
-		try {
-			
-			stmt = conn.createStatement();
-			
+		try (Statement stmt = conn.createStatement()) {
 			stmt.execute("SELECT `canonical_year_id`, `text` FROM `canonical_year`;");
 	    	
 	    	ResultSet rs = stmt.getResultSet();
