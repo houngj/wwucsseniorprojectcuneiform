@@ -23,10 +23,28 @@ class ParallelExtractor
     private static final String DB_HOST = "jdbc:mysql://localhost/cuneiform";
     private static final String DB_USER = "dingo";
     private static final String DB_PASS = "hungry!";
-    
+
     public ParallelExtractor(BufferedReader reader) {
-    	this.factory = new TabletFactory(reader);
-    	this.nameExtractor = new NameExtractor();
+        this.factory = new TabletFactory(reader);
+        this.nameExtractor = new NameExtractor();
+        // clearDatabase();
+    }
+
+    void clearDatabase() {
+        final String[] tables = new String[] {
+                "search_index", "line", "month_reference", "year_reference",
+                "text_section", "tablet", "search_term"
+        };
+        try (Connection conn = getConnection();
+                Statement stmnt = conn.createStatement()) {
+            for (String table : tables) {
+                stmnt.executeUpdate(String.format("DELETE FROM `%s`", table));
+                stmnt.executeUpdate(String.format("ALTER TABLE `%s` AUTO_INCREMENT = 1", table));
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void spawnThreads(int numThreads) {
@@ -58,7 +76,7 @@ class ParallelExtractor
             t.printStats(output);
         }
     }
-    
+
     public void printUnmatched(PrintStream output) {
         for(Tablet t : tablets) {
             if(t.foundMonth == null && t.foundYear == null) {
@@ -66,7 +84,7 @@ class ParallelExtractor
             }
         }
     }
-    
+
     public void printNames(PrintStream output) {
         nameExtractor.print(output);
     }
@@ -119,9 +137,9 @@ class ParallelExtractor
             System.out.println("Database access problem encountered: " + e.getMessage());
         }
     }
-    
+
     private static Connection getConnection() throws SQLException
     {
-    	return DriverManager.getConnection(DB_HOST, DB_USER, DB_PASS);
+        return DriverManager.getConnection(DB_HOST, DB_USER, DB_PASS);
     }
 }
