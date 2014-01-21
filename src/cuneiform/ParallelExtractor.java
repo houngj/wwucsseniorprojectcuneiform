@@ -27,19 +27,19 @@ class ParallelExtractor
     public ParallelExtractor(BufferedReader reader) {
         this.factory = new TabletFactory(reader);
         this.nameExtractor = new NameExtractor();
-        // clearDatabase();
+        clearDatabase();
     }
 
     void clearDatabase() {
         final String[] tables = new String[] {
                 "search_index", "line", "month_reference", "year_reference",
-                "text_section", "tablet", "search_term"
+                "text_section", "tablet_object", "tablet", "search_term"
         };
         try (Connection conn = getConnection();
                 Statement stmnt = conn.createStatement()) {
             for (String table : tables) {
-                stmnt.executeUpdate(String.format("DELETE FROM `%s`", table));
-                stmnt.executeUpdate(String.format("ALTER TABLE `%s` AUTO_INCREMENT = 1", table));
+                stmnt.executeUpdate(String.format("DELETE FROM `%s`;", table));
+                stmnt.executeUpdate(String.format("ALTER TABLE `%s` AUTO_INCREMENT = 1;", table));
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block

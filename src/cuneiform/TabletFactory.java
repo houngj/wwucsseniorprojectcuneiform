@@ -9,7 +9,7 @@ class TabletFactory {
     private final BufferedReader reader;
     private String               prevLine = null;
 
-	public TabletFactory(BufferedReader reader) {
+    public TabletFactory(BufferedReader reader) {
         this.reader = reader;
     }
 
@@ -46,25 +46,63 @@ class TabletFactory {
             }
         } while ((line = getLine()) != null);
 
+        List<TabletObject> objects = new ArrayList<>();
+
+        TabletObject obj = null;
+        while ((obj = buildObject()) != null) {
+            objects.add(obj);
+        }
+
+        return new Tablet(name, lang, null, objects);
+    }
+
+    private TabletObject buildObject()
+            throws IOException {
+        String name = (prevLine == null) ? getLine() : prevLine;
+        if (name == null || name.charAt(0) == '&') {
+            return null;  // End of file or end of object.
+        }
+
+        prevLine = null; // makes buildSection() read new name
         List<TabletSection> sections = new ArrayList<>();
 
         TabletSection sect = null;
         while ((sect = buildSection()) != null) {
             sections.add(sect);
         }
-
-        return new Tablet(name, lang, null, sections);
+        return new TabletObject(name, sections);
     }
 
     private TabletSection buildSection()
             throws IOException {
-        String title = (prevLine == null) ? getLine() : prevLine;
+        String       line;
+        String       title = (prevLine == null) ? (getLine()) : prevLine;
         List<String> lines = new ArrayList<>();
-        if (title == null || title.charAt(0) != '@') {
+
+        if (title == null) return null; // End of file
+
+        // Skip comments and blank lines
+        while (title.isEmpty() || title.charAt(0) == '$' || title.charAt(0) == '#') {
+            title = getLine();
+        }
+
+        if (title.charAt(0) == '&') {
+            return null; // End of object
+        } else if (Character.isDigit(title.charAt(0))) {
+            lines.add(stripLineNumber(title)); // section has no title, use ""
+            title = "";
+        } else if (title.charAt(0) != '@') {
+            throw new IllegalStateException("Invalid title " + title);
+        }
+
+        // Check for start of new object
+        if (title.startsWith("@tablet")     || title.startsWith("@envelop")  ||
+                title.startsWith("@bulla")  || title.startsWith("@seal")     ||
+                title.startsWith("@object") || title.startsWith("@fragment") ||
+                title.startsWith("@obejct")) {
             return null;
         }
 
-        String line;
         while ((line = getLine()) != null) {
             if (line.isEmpty()) {
                 continue;

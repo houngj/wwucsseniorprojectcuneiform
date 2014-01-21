@@ -8,73 +8,65 @@ import java.sql.*;
 
 public class Tablet
         implements Comparable<Tablet> {
-	private int                      id;
+    private int                      id;
     public final String              name;
     public final String              lang;
-    public final String              object;
-    public final List<TabletSection> sections;
+    public final List<TabletObject>  objects;
     public FoundDate                 foundMonth;
     public FoundDate                 foundYear;
     public final List<String>        names = new ArrayList<>();
 
-    Tablet(String name, String lang, String object, List<TabletSection> sections)
+    Tablet(String name, String lang, String object, List<TabletObject> objects)
             throws IOException {
-    	this.id   = 0;
-        this.name = name;
-        this.lang = lang;
-        this.object = object;
-        this.sections = sections;
-        if (name.charAt(0) != '&')
-            throw new IllegalStateException();
+        this.id      = 0;
+        this.name    = name;
+        this.lang    = lang;
+        this.objects = objects;
+        assert (name.charAt(0) == '&');
     }
 
     public void print(PrintStream output) {
         output.println(name);
         output.println(lang);
-        output.println(object);
-        for (TabletSection t : sections) {
+        for (TabletObject t : objects) {
             t.print(output);
         }
     }
 
-    public void insert(Connection conn)
-    {
-		try (Statement stmt = conn.createStatement()) {
-	    	this.insertTabletRecord(stmt);
-	    	
-	    	for (TabletSection section : this.sections) {
-	    		section.insert(stmt, this.id);
-	    	}
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    public void insert(Connection conn) {
+        try {
+            this.insertTabletRecord(conn);
+
+            for (TabletObject object : this.objects) {
+                object.insert(conn, this.id);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
-    
-    private void insertTabletRecord(Statement stmt) throws SQLException
+
+    private void insertTabletRecord(Connection conn)
+            throws SQLException
     {
-    	StringBuilder sb = new StringBuilder();
-    	
-    	sb.append("INSERT INTO `tablet` (`name`, `lang`) VALUES ");
-    	sb.append
-    	(
-    		String.format
-    		(
-    			" ('%s', '%s');",
-    			this.name.replace("'",  "\\'"),
-    			this.lang
-    		)
-    	);
-    	
-    	stmt.execute(sb.toString(), Statement.RETURN_GENERATED_KEYS);
-    	
-    	ResultSet rs = stmt.getGeneratedKeys();
-    	if ((rs != null) && (rs.next())) {
-    		this.id = rs.getInt(1);
-    	}
+        String query = "INSERT INTO `tablet` (`name`, `lang`) VALUES (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, name);
+            // TODO: Find way to insert default value.
+            stmt.setString(2, (lang == null) ? "sux" : lang);
+
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if ((rs != null) && (rs.next())) {
+                    this.id = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
     }
-    
+
     public void setMonth(FoundDate newMonth) {
         if (foundMonth == null || newMonth.compareTo(foundMonth) > 0) {
             foundMonth = newMonth;
@@ -133,6 +125,52 @@ public class Tablet
     }
 }
 
+class TabletObject {
+    private      int                 id;
+    public final String              name;
+    public final List<TabletSection> sections;
+    public TabletObject(String name, List<TabletSection> sections) {
+        this.id       = 0;
+        this.name     = name;
+        this.sections = sections;
+        assert(this.name.charAt(0) == '@');
+    }
+
+    public void print(PrintStream output) {
+        output.println(name);
+        for(TabletSection s : sections) {
+            s.print(output);
+        }
+    }
+
+    public void insert(Connection conn, int tabletID)
+            throws SQLException {
+        insertTabletObject(conn, tabletID);
+
+        for (TabletSection section : sections) {
+            section.insert(conn, this.id);
+        }
+    }
+
+    private void insertTabletObject(Connection conn, int tabletID)
+            throws SQLException {
+        String query = "INSERT INTO `tablet_object` (`tablet_id`, `obj_name`) "
+                     + "VALUES (?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, tabletID); // Parameters indices are 1-based
+            stmt.setString(2, name);
+
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if ((rs != null) && (rs.next())) {
+                    this.id = rs.getInt(1);
+                }
+            }
+        }
+    }
+}
+
 class TabletSection {
 	private int id;
 	
@@ -140,9 +178,10 @@ class TabletSection {
     public final List<String> lines;
 
     TabletSection(String title, List<String> lines) {
-    	this.id    = 0;
+        this.id    = 0;
         this.title = title;
         this.lines = lines;
+        assert(title.charAt(0) == '@');
     }
 
     public void print(PrintStream output) {
@@ -151,55 +190,50 @@ class TabletSection {
             output.format("%3d. %s%n", i + 1, lines.get(i));
         }
     }
-    
-    public void insert(Statement stmt, int tabletID)
-    		throws SQLException
-    {
-    	int tabletSectionID = this.insertTabletSection(stmt, tabletID);
-    	
-    	for (String line : this.lines) {
-    		this.insertLine(stmt, tabletSectionID, line);
-    	}
+
+    public void insert(Connection conn, int objectID)
+            throws SQLException {
+        int tabletSectionID = this.insertTabletSection(conn, objectID);
+
+        try (Statement stmt = conn.createStatement()) {
+            for (String line : this.lines) {
+                this.insertLine(stmt, tabletSectionID, line);
+            }
+        }
     }
-    
-    private int insertTabletSection(Statement stmt, int tabletID)
-    		throws SQLException {
-    	
-    	StringBuilder sb = new StringBuilder();
-    	
-    	String text = "";
-    	
-    	for (String line : this.lines) {
-    		text += (line.replace("'", "\\'") + " ");
-    	}
-    	
-    	Integer sectionType = this.getSectionType();
-    	
-        sb.append("INSERT INTO `text_section` ");
-        sb.append("(`tablet_id`, `text_section_type_id`, `text`) VALUES ");
-    	sb.append
-    	(
-    		String.format
-    		(
-    			" ('%d', %s, '%s');",
-    			tabletID,
-    			(null != sectionType)
-    				? sectionType.toString()
-    				: "NULL",
-    			text
-    		)
-    	);
-    	
-    	stmt.execute(sb.toString(), Statement.RETURN_GENERATED_KEYS);
-    	
-    	ResultSet rs = stmt.getGeneratedKeys();
-    	if ((rs != null) && (rs.next())) {
-    		this.id = rs.getInt(1);
-    	}
-    	
-    	return this.id;
+
+    private int insertTabletSection(Connection conn, int tabletObjectId)
+            throws SQLException {
+        String query = "INSERT INTO `text_section` "
+                     + "(`tablet_object_id`, `text_section_type_id`, `section_text`) "
+                     + "VALUES (?, ?, ?)";
+        String text = "";
+        for (String line : this.lines) {
+            text += line + " ";
+        }
+        Integer sectionType = this.getSectionType();
+        try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            // Indices are 1-based
+            stmt.setInt(1, tabletObjectId);
+            stmt.setString(3, text);
+
+            if (sectionType == null) {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            } else {
+                stmt.setInt(2, sectionType);
+            }
+
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if ((rs != null) && (rs.next())) {
+                    this.id = rs.getInt(1);
+                }
+            }
+            return this.id;
+        }
     }
-    
+
     private void insertLine(Statement stmt, int tabletSectionID, String line)
     		throws SQLException
     {
@@ -219,7 +253,7 @@ class TabletSection {
     	
     	stmt.execute(sb.toString());
     }
-    
+
     public void insertMonth(Connection conn, String text, FoundDate date)
     {
         try (Statement stmt = conn.createStatement()) {
@@ -246,7 +280,7 @@ class TabletSection {
 			e.printStackTrace();
 		}
     }
-    
+
     public void insertYear(Connection conn, String text, FoundDate date)
     {
         try (Statement stmt = conn.createStatement()) {
@@ -273,7 +307,7 @@ class TabletSection {
 			e.printStackTrace();
 		}
     }
-    
+
     private Integer getSectionType() {
     	
     	if (this.title.startsWith("@seal")) {

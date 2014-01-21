@@ -50,12 +50,14 @@ public class NameExtractor {
     }
 
     private boolean tabletContains(Tablet tablet, Name name) {
-        for (TabletSection sect : tablet.sections) {
-            for (String line : sect.lines) {
-                String[] parts = line.split(" ");
-                for (String part : parts) {
-                    if (part.equalsIgnoreCase(name.name)) {
-                        return true;
+        for (TabletObject obj : tablet.objects) {
+            for (TabletSection sect : obj.sections) {
+                for (String line : sect.lines) {
+                    String[] parts = line.split(" ");
+                    for (String part : parts) {
+                        if (part.equalsIgnoreCase(name.name)) {
+                            return true;
+                        }
                     }
                 }
             }

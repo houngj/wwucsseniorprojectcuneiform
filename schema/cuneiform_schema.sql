@@ -27,6 +27,23 @@ CREATE TABLE `tablet`
 		DEFAULT 'sux'		-- Default: sumerian (sux)
 );
 
+CREATE TABLE `tablet_object`
+(
+	`tablet_object_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`tablet_id`
+		INT,
+	`obj_name`
+		VARCHAR(100)
+		NOT NULL,
+
+	FOREIGN KEY (`tablet_id`)
+		REFERENCES `tablet` (`tablet_id`)
+);
+
 CREATE TABLE `text_section_type`
 (
 	`text_section_type_id`
@@ -57,7 +74,7 @@ CREATE TABLE `text_section`
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	`tablet_id`
+	`tablet_object_id`
 		INT
 		NOT NULL,
 
@@ -81,13 +98,13 @@ CREATE TABLE `text_section`
 	us down significantly.
 */
 
-	`text`
+	`section_text`
 		TEXT
 		NOT NULL
 		DEFAULT '',
 
-	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`tablet_id`),
+	FOREIGN KEY (`tablet_object_id`)
+		REFERENCES `tablet_object` (`tablet_object_id`),
 	FOREIGN KEY (`text_section_type_id`)
 		REFERENCES `text_section_type` (`text_section_type_id`)
 );

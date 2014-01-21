@@ -91,32 +91,32 @@ public class DateExtractor {
     public void process(Connection conn, Tablet t) {
         final String yearStart = "mu";
         final String monthStart = "iti";
-        
+
         t.insert(conn);
-        
-        for (TabletSection s : t.sections) {
-            for (String line : s.lines) {
-                int yearIndex = line.indexOf(yearStart);
-                int monthIndex = line.indexOf(monthStart);
-                if (monthIndex != -1) {
-                    String substring = line.substring(monthIndex + monthStart.length()).trim();
-                    FoundDate c = getConfidence(substring, knownMonths);
-                    t.setMonth(c);
-                    
-                    // TODO: load KnownDates into memory so that we can relate found date
-                    // references to the best KnownDate match.
-                    
-                    s.insertMonth(conn, substring, c);
-                }
-                if (yearIndex != -1) {
-                    String substring = line.substring(yearIndex + yearStart.length()).trim();
-                    FoundDate c = getConfidence(substring, knownYears);
-                    t.setYear(c);
-                    
-                    // TODO: load KnownDates into memory so that we can relate found date
-                    // references to the best KnownDate match.
-                    
-                    s.insertYear(conn, substring, c);
+
+        for (TabletObject o : t.objects) {
+            for (TabletSection s : o.sections) {
+                for (String line : s.lines) {
+                    int yearIndex = line.indexOf(yearStart);
+                    int monthIndex = line.indexOf(monthStart);
+                    if (monthIndex != -1) {
+                        String substring = line.substring(monthIndex + monthStart.length()).trim();
+                        FoundDate c = getConfidence(substring, knownMonths);
+                        t.setMonth(c);
+
+                        // TODO: load KnownDates into memory so that we can relate found date
+                        // references to the best KnownDate match.
+                        s.insertMonth(conn, substring, c);
+                    }
+                    if (yearIndex != -1) {
+                        String substring = line.substring(yearIndex + yearStart.length()).trim();
+                        FoundDate c = getConfidence(substring, knownYears);
+                        t.setYear(c);
+
+                        // TODO: load KnownDates into memory so that we can relate found date
+                        // references to the best KnownDate match.
+                        s.insertYear(conn, substring, c);
+                    }
                 }
             }
         }
