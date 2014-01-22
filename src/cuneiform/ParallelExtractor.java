@@ -20,7 +20,7 @@ class ParallelExtractor
     private double              yearConf  = 0;
     private double              monthConf = 0;
 
-    private static final String DB_HOST = "jdbc:mysql://localhost/cuneiform";
+    private static final String DB_HOST = "jdbc:mysql://wwu-cuneiform.co5tt9crocw2.us-west-2.rds.amazonaws.com/cuneiform";
     private static final String DB_USER = "dingo";
     private static final String DB_PASS = "hungry!";
 
@@ -32,8 +32,8 @@ class ParallelExtractor
 
     void clearDatabase() {
         final String[] tables = new String[] {
-                "search_index", "line", "month_reference", "year_reference",
-                "text_section", "tablet_object", "tablet", "search_term"
+                "line", "month_reference", "year_reference",
+                "text_section", "tablet_object", "tablet"
         };
         try (Connection conn = getConnection();
                 Statement stmnt = conn.createStatement()) {
@@ -44,6 +44,7 @@ class ParallelExtractor
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new IllegalStateException(e);
         }
     }
 

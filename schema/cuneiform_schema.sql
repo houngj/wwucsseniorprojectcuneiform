@@ -7,7 +7,7 @@ USE `cuneiform`;
 
 /* Create the dingo user, if it doesn't exist*/
 
-GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost'  IDENTIFIED BY 'hungry!';
+GRANT ALL ON `cuneiform`.* TO 'dingo'@'%'  IDENTIFIED BY 'hungry!';
 
 /* Create tables. */
 
@@ -24,7 +24,8 @@ CREATE TABLE `tablet`
 	`lang`
 		VARCHAR(16)
 		NOT NULL
-		DEFAULT 'sux'		-- Default: sumerian (sux)
+		DEFAULT 'sux',		-- Default: sumerian (sux)
+	FULLTEXT KEY (`name`)
 );
 
 CREATE TABLE `tablet_object`
@@ -106,7 +107,8 @@ CREATE TABLE `text_section`
 	FOREIGN KEY (`tablet_object_id`)
 		REFERENCES `tablet_object` (`tablet_object_id`),
 	FOREIGN KEY (`text_section_type_id`)
-		REFERENCES `text_section_type` (`text_section_type_id`)
+		REFERENCES `text_section_type` (`text_section_type_id`),
+	FULLTEXT KEY (`section_text`)
 );
 
 CREATE TABLE `line`
@@ -131,7 +133,8 @@ CREATE TABLE `line`
 		DEFAULT '',
 
 	FOREIGN KEY (`text_section_id`)
-		REFERENCES `text_section` (`text_section_id`)
+		REFERENCES `text_section` (`text_section_id`),
+	FULLTEXT KEY (`text`)
 );
 
 CREATE TABLE `canonical_month`
@@ -497,39 +500,6 @@ CREATE TABLE `year_reference`
 	FOREIGN KEY (`canonical_year_id`)
 		REFERENCES `canonical_year` (`canonical_year_id`)
 );
-
-CREATE TABLE `search_term`
-(
-	`search_term_id`
-		INT
-		PRIMARY KEY
-		NOT NULL
-		AUTO_INCREMENT,
-	`term`
-		VARCHAR(100)
-		NOT NULL
-);
-
-CREATE TABLE `search_index`
-(
-	`search_index_id`
-		INT
-		PRIMARY KEY
-		NOT NULL
-		AUTO_INCREMENT,
-	`tablet_id`
-		INT
-		NOT NULL,
-	`search_term_id`
-		INT 
-		NOT NULL,
-	
-	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`tablet_id`),
-	FOREIGN KEY (`search_term_id`)
-		REFERENCES `search_term` (`search_term_id`)
-);
-
 
 CREATE TABLE `name`
 (
