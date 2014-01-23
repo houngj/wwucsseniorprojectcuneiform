@@ -530,6 +530,38 @@ CREATE TABLE `search_index`
 		REFERENCES `search_term` (`search_term_id`)
 );
 
+
+CREATE TABLE `name`
+(
+	`name_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`name_text`
+		VARCHAR(100)
+		NOT NULL
+);
+
+CREATE TABLE `name_reference`
+(
+	`name_reference_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`name_id`
+		INT
+		NOT NULL,
+	`tablet_id`
+		INT
+		NOT NULL,
+	FOREIGN KEY (`tablet_id`)
+		REFERENCES `tablet` (`tablet_id`),
+	FOREIGN KEY (`name_id`)
+		REFERENCES `name` (`name_id`)
+);
+
 -- references to deities
 -- codifying damage to tablets
 -- transaction table
