@@ -36,15 +36,19 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
 
 if (isset($_GET['search'])) {
     $search = htmlspecialchars(trim($_GET['search']));
+    $query = "";
+    foreach(explode(" ", $search) as $term) {
+        $query .= '+"' . $term . '"';
+    }
 } else {
 
 }
 
 function buildQuery() {
-    global $page, $search;
+    global $page, $search, $query;
     $start_limit = ($page - 1) * 10;
 
-    $sql = "SELECT t.tablet_id, MATCH(ts.section_text) AGAINST('$search' IN BOOLEAN MODE) as score\n" .
+    $sql = "SELECT t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)) as score\n" .
             "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
             "GROUP BY t.tablet_id\n" .
             "ORDER BY `score` DESC\n" .
