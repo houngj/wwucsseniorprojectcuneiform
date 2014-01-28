@@ -48,8 +48,9 @@ function buildQuery() {
     global $page, $search, $query;
     $start_limit = ($page - 1) * 10;
 
-    $sql = "SELECT t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)) as score\n" .
+    $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query')) as score\n" .
             "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
+            "WHERE MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)\n" .
             "GROUP BY t.tablet_id\n" .
             "ORDER BY `score` DESC\n" .
             "LIMIT $start_limit,10";
@@ -68,20 +69,26 @@ function printTablet($tablet_id) {
     $tablet->display();
 }
 
-function printResults() {
-    global $pdo;
+function getResults() {
+    global $pdo, $numResults;
     $sql = buildQuery();
     $result = $pdo->query($sql);
+    $foundRows  = $pdo->query("SELECT FOUND_ROWS();")->fetch();
+    $numResults = $foundRows["FOUND_ROWS()"];
+    return $result;
+}
+
+function printResults($result) {
     while ($row = $result->fetch()) {
         echo "<h3>", $row['score'], "</h3>";
         printTablet($row['tablet_id']);
     }
 }
 
-function printPagination($numResults) {
-    global $results_per_page, $page, $search, $php_self;
+function printPagination() {
+    global $results_per_page, $page, $search, $php_self, $numResults;
 
-    $lastPage = ($numResults + $results_per_page - 1) / $results_per_page;
+    $lastPage = (int)(($numResults + $results_per_page - 1) / $results_per_page);
     $baseUrl = $php_self . "?search=" . $search;
 
     $minPage = max(1, $page - 2);
@@ -157,9 +164,10 @@ function printPagination($numResults) {
                 <div>
                     <?php
                     if (isset($search)) {
-                        printPagination(101, $page);
-                        printResults();
-                        printPagination(101, $page);
+                        $result = getResults();
+                        printPagination();
+                        printResults($result);
+                        printPagination();
                     }
                     ?>
                 </div>
