@@ -79,6 +79,8 @@ function getResults() {
 }
 
 function printResults($result) {
+    global $numResults;
+    echo "<p>Returned $numResults results</p>";
     while ($row = $result->fetch()) {
         echo "<h3>", $row['score'], "</h3>";
         printTablet($row['tablet_id']);
@@ -154,14 +156,14 @@ function printPagination() {
                 <h1>Tablet Search</h1>
                 <form action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" class="form-control" value="<?php if (isset($search)) echo $search; ?>">
+                        <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) echo $search; ?>">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Go!</button>
                         </span>
                     </div><!-- /input-group -->
                 </form>
 
-                <div>
+                <div id="tablet-output">
                     <?php
                     if (isset($search)) {
                         $result = getResults();
@@ -180,6 +182,10 @@ function printPagination() {
         <!--Placed at the end of the document so the pages load faster -->
         <script src = "https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
+        <script src="js/site.js"></script>
+        <script type="text/javascript">
+            getDates(document.getElementById("search").value);
+        </script>
     </body>
 </html>
 

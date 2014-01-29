@@ -1,6 +1,6 @@
 <?php
 
-class Tablet {
+class Tablet implements JsonSerializable {
     private $id;
     private $name;
     private $lang;
@@ -71,9 +71,18 @@ class Tablet {
         echo "</div></div>";
     }
 
+    public function jsonSerialize() {
+        return [
+                   'id'      => $this->id,
+                   'name'    => $this->name,
+                   'lang'    => $this->lang,
+                   'objects' => $this->objects
+               ];
+    }
+
 }
 
-class TabletObject {
+class TabletObject implements JsonSerializable{
     private $id;
     private $name;
     private $sections;
@@ -102,9 +111,17 @@ class TabletObject {
         echo "</div></div>";
     }
 
+    public function jsonSerialize() {
+        return [
+                   'id'       => $this->id,
+                   'name'     => $this->name,
+                   'sections' => $this->sections
+               ];
+    }
+
 }
 
-class TextSection {
+class TextSection implements JsonSerializable{
     private $id;
     private $name;
     private $lines;
@@ -133,6 +150,14 @@ class TextSection {
         }
         echo "</ol>";
         echo "</div></div>";
+    }
+
+    public function jsonSerialize() {
+        return [
+                   'id'    => $this->id,
+                   'name'  => $this->name,
+                   'lines' => $this->lines
+               ];
     }
 
 }
