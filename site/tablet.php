@@ -18,6 +18,7 @@ class Tablet implements JsonSerializable {
             }
         } catch (Exception $e) {
             echo 'Caught exception: ' . $e->getMessage() . "\n";
+            echo $sql;
         }
         $this->name    = $result[0]['name'];
         $this->lang    = $result[0]['lang'];

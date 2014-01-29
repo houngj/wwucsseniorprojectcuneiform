@@ -37,7 +37,7 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
 if (isset($_GET['search'])) {
     $search = htmlspecialchars(trim($_GET['search']));
     $query = "";
-    foreach(explode(" ", $search) as $term) {
+    foreach (explode(" ", $search) as $term) {
         $query .= '+"' . $term . '"';
     }
 } else {
@@ -73,7 +73,7 @@ function getResults() {
     global $pdo, $numResults;
     $sql = buildQuery();
     $result = $pdo->query($sql);
-    $foundRows  = $pdo->query("SELECT FOUND_ROWS();")->fetch();
+    $foundRows = $pdo->query("SELECT FOUND_ROWS();")->fetch();
     $numResults = $foundRows["FOUND_ROWS()"];
     return $result;
 }
@@ -90,7 +90,7 @@ function printResults($result) {
 function printPagination() {
     global $results_per_page, $page, $search, $php_self, $numResults;
 
-    $lastPage = (int)(($numResults + $results_per_page - 1) / $results_per_page);
+    $lastPage = (int) (($numResults + $results_per_page - 1) / $results_per_page);
     $baseUrl = $php_self . "?search=" . $search;
 
     $minPage = max(1, $page - 2);
@@ -137,7 +137,6 @@ function printPagination() {
     </head>
 
     <body>
-
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -156,23 +155,30 @@ function printPagination() {
                 <h1>Tablet Search</h1>
                 <form action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) echo $search; ?>">
+                        <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) {echo $search;} ?>">
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">Go!</button>
                         </span>
                     </div><!-- /input-group -->
                 </form>
-
                 <div id="tablet-output">
                     <?php
                     if (isset($search)) {
                         $result = getResults();
                         printPagination();
+                    ?>
+                    <div>
+                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#date-modal">Date Distribution</button>
+                        <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#name-modal">Name Distribution</button>
+                    </div>
+                    <?php
                         printResults($result);
                         printPagination();
                     }
                     ?>
                 </div>
+
+
             </div>
         </div><!--/.container -->
 
@@ -183,14 +189,57 @@ function printPagination() {
         <script src = "https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/site.js"></script>
+        <script src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
-            getDates(document.getElementById("search").value);
+            google.load("visualization", "1", {packages: ["corechart"]});
+            if (document.getElementById("search").value.length !== 0) {
+                graphDates(document.getElementById("search").value);
+                graphNames(document.getElementById("search").value);
+            }
         </script>
+
+
+
+        <!-- Date Modal -->
+        <div class="modal fade" id="date-modal" tabindex="-1" role="dialog" aria-labelledby="date-modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 1100px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="date-modalLabel">Date Distribution</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="date_chart_div"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Name Modal -->
+        <div class="modal fade" id="name-modal" tabindex="-1" role="dialog" aria-labelledby="name-modalLabel" aria-hidden="true">
+            <div class="modal-dialog" style="width: 1100px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="date-modalLabel">Name Distribution</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="name_chart_div"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
 
+
 <?php
-$result = $pdo->query("SHOW PROFILE;")->fetchAll();
+$result = $pdo->query("SHOW PROFILE;")->fetchAll(PDO::FETCH_ASSOC);
 if (empty($result) == false) {
     dumpResult($result);
 }

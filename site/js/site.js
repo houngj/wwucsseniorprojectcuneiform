@@ -26,42 +26,68 @@ function printTextSection(section) {
     for (var i = 0; i < section.lines.length; ++i) {
         value += "<li>" + section.lines[i] + "</li>";
     }
-    
+
     value += "</ol></div></div>";
     return value;
 }
 
-function getTablet(tabletID) {
-    $.getJSON("./REST/tablet.php", "tabletID=" + tabletID, printTablet);
+function getTablet(tablet_id) {
+    $.getJSON("./REST/tablet.php", "tablet_id=" + tablet_id, printTablet);
 }
 
 function printDates(data) {
     console.log(data);
 }
 
-function getDates(search) {
-    $.getJSON("./REST/dates.php", "search=" + search, function(data) {
+
+
+function search(query) {
+    $.getJSON("./REST/search.php", "search=" + query, function(data) {
         console.log(data);
-        
-        var max = 1;
-        for(var i = 0; i < data.length; ++i) {
-            if(parseInt(data[i].count) > max) {
-                max = parseInt(data[i].count);
-            }
+        for (var i = 0; i < data.results.length; ++i) {
+            getTablet(data.results[i].tablet_id);
         }
-        console.log(max);
-        var text = "<table style=\"position: fixed; right: 0; font-size: 3px; top: 100px; width: 50px;\">";
-        for(var i = 0; i < data.length; ++i) {
-            var value = 255 - Math.floor(parseInt(data[i].count) * 255 / max);
-            var string = value.toString(16);
-            if(string.length == 1) {
-                string = "0" + string;
-            }
-            console.log(string);
-            text += "<tr><td style=\"height: 3px; background-color:#" + string + string + "FF;\">" + "</td></tr>";
+    });
+}
+
+function graphDates(search) {
+    $.getJSON("./REST/dates.php", "search=" + search, function(data) {
+        var dataArray = [['Abbreviation', 'Count']];
+
+        for (var i = 0; i < data.length; ++i) {
+            dataArray.push([data[i].abbreviation, parseInt(data[i].count)]);
         }
-        text += "</table>";
-        $("body").append(text);
-        
+
+        var chartData = google.visualization.arrayToDataTable(dataArray);
+        var options = {
+            'title': 'Date Distribution',
+            'width': 1000,
+            'height': 700
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('date_chart_div'));
+        chart.draw(chartData, options);
+    });
+}
+
+function graphNames(search) {
+    $.getJSON("./REST/names.php", "search=" + search, function(data) {
+        var dataArray = [['Name', 'Count']];
+
+        for (var i = 0; i < Math.min(data.length, 20); ++i) {
+            dataArray.push([data[i].name_text, parseInt(data[i].count)]);
+        }
+
+        var chartData = google.visualization.arrayToDataTable(dataArray);
+        var options = {
+            'title': 'Name Distribution',
+            'width': 1000,
+            'height': 700,
+            'hAxis.slantedText': true,
+            'hAxis.slantedTextAngle': 90
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('name_chart_div'));
+        chart.draw(chartData, options);
     });
 }
