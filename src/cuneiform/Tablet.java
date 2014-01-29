@@ -260,7 +260,7 @@ class TabletSection {
             StringBuilder sb = new StringBuilder();
 
             sb.append("INSERT INTO `month_reference` ");
-            sb.append("(`text_section_id`, `canonical_month_id`, `text`, `confidence`) VALUES ");
+            sb.append("(`text_section_id`, `canonical_month_id`, `found_text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format
@@ -278,6 +278,7 @@ class TabletSection {
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
     }
 
@@ -287,7 +288,7 @@ class TabletSection {
             StringBuilder sb = new StringBuilder();
 			
             sb.append("INSERT INTO `year_reference` ");
-            sb.append("(`text_section_id`, `canonical_year_id`, `text`, `confidence`) VALUES ");
+            sb.append("(`text_section_id`, `canonical_year_id`, `found_text`, `confidence`) VALUES ");
 	    	sb.append
 	    	(
 	    		String.format
@@ -305,6 +306,7 @@ class TabletSection {
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
     }
 

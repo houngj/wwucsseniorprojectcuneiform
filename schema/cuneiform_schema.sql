@@ -453,7 +453,7 @@ CREATE TABLE `month_reference`
 	`canonical_month_id`
 		INT
 		NOT NULL,
-	`text`
+	`found_text`
 		NVARCHAR(270)
 		NOT NULL,
 	`confidence`
@@ -484,7 +484,7 @@ CREATE TABLE `year_reference`
 	`canonical_year_id`
 		INT
 		NOT NULL,
-	`text`
+	`found_text`
 		NVARCHAR(270)
 		NOT NULL,
 	`confidence`
