@@ -4,6 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,13 +45,14 @@ public class NameExtractor {
         }
     }
 
-    public void process(Tablet tablet) {
+    public void process(Connection conn, Tablet tablet) {
         for (Name name : names) {
             if (tabletContains(tablet, name)) {
-                tablet.addName(name.name);
+                tablet.addName(name);
                 name.addTablet(tablet);
             }
         }
+        tablet.insertNames(conn);
     }
 
     private boolean tabletContains(Tablet tablet, Name name) {
@@ -67,6 +73,7 @@ public class NameExtractor {
 }
 
 class Name implements Comparable<Name> {
+    private      int           id      = -1;
     public final String        name;
     private final List<Tablet> tablets = new ArrayList<>();
 
@@ -78,6 +85,10 @@ class Name implements Comparable<Name> {
         tablets.add(t);
     }
 
+    public int id() {
+        return id;
+    }
+
     public void print(PrintStream output) {
         Collections.sort(tablets, new TabletComparator());
         output.format("name: %-20s appearing in %d tablets%n", name, tablets.size());
@@ -86,6 +97,44 @@ class Name implements Comparable<Name> {
             String year  = (t.foundYear  == null) ? ("") : (t.foundYear.date.getText());
             output.format("  %-40s\t%-20s\t%s%n", t.name, year, month);
         }
+    }
+
+    public void insert(Connection conn, int tabletId) {
+        synchronized (this) {  // Make sure the name is inserted first, only once please.
+            if(this.id == -1) {
+                insertName(conn);
+            }
+        }
+
+        String sql = "INSERT INTO `name_reference` (`name_id`, `tablet_id`) VALUES (?, ?);";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, this.id); // Parameters indices are 1-based
+            stmt.setInt(2, tabletId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void insertName(Connection conn) {
+        String sql = "INSERT INTO `name` (`name_text`) VALUES (?);";
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, name); // Parameters indices are 1-based
+            stmt.executeUpdate();
+
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if ((rs != null) && (rs.next())) {
+                    this.id = rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
+
     }
 
     static class TabletComparator

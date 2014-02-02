@@ -114,7 +114,7 @@ class ParallelExtractor
 
                 while ((t = getTablet()) != null) {
                     dateExtractor.process(conn, t);
-                    nameExtractor.process(t);
+                    nameExtractor.process(conn, t);
                     System.err.println(tablets.size());
 
                     synchronized (tablets) {

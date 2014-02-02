@@ -14,7 +14,7 @@ public class Tablet
     public final List<TabletObject>  objects;
     public FoundDate                 foundMonth;
     public FoundDate                 foundYear;
-    public final List<String>        names = new ArrayList<>();
+    public final List<Name>          names = new ArrayList<>();
 
     Tablet(String name, String lang, String object, List<TabletObject> objects)
             throws IOException {
@@ -43,6 +43,12 @@ public class Tablet
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    public void insertNames(Connection conn) {
+        for(Name n : names) {
+            n.insert(conn, this.id);
         }
     }
 
@@ -79,7 +85,7 @@ public class Tablet
         }
     }
 
-    public void addName(String name) {
+    public void addName(Name name) {
         names.add(name);
     }
 
@@ -95,7 +101,7 @@ public class Tablet
             foundYear.printStats(output);
         }
         output.println(" names:");
-        for (String n : names) {
+        for (Name n : names) {
             output.format("  %s%n", n);
         }
         output.format("%n");
