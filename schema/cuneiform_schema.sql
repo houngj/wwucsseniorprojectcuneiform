@@ -86,7 +86,9 @@ CREATE TABLE `text_section`
 	We shouldn't support them all, so for now we'll just allow `textsectiontype_id`
 	to be NULL if it's from a source we don't care to implement yet.
 */
-
+	`text_section_name`
+		VARCHAR(100)
+		NOT NULL,
 	`text_section_type_id`
 		INT
 		NULL,

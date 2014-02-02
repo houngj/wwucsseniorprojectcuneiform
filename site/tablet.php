@@ -8,7 +8,7 @@ class Tablet implements JsonSerializable {
 
     public function __construct($id, PDO $pdo) {
         $this->id  = $id;
-        $sql       = "SELECT t.tablet_id, t.name, t.lang, o.tablet_object_id, o.obj_name, ts.text_section_id, l.text\n" .
+        $sql       = "SELECT t.tablet_id, t.name, t.lang, o.tablet_object_id, o.obj_name, ts.text_section_id, l.text, ts.text_section_name\n" .
                      "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts NATURAL JOIN `line` l\n" .
                      "WHERE t.tablet_id = " . $id;
         try {
@@ -34,7 +34,7 @@ class Tablet implements JsonSerializable {
                 $object = new TabletObject($row['tablet_object_id'], $row['obj_name']);
             }
             if ($section == NULL) {
-                $section = new TextSection($row['text_section_id'], '@unknown');
+                $section = new TextSection($row['text_section_id'], $row['text_section_name']);
             }
 
             if ($section->getID() == $row['text_section_id']) {
@@ -43,7 +43,7 @@ class Tablet implements JsonSerializable {
                 // New section, add current section to current object
                 $object->addSection($section);
                 // Create new TextSection
-                $section = new TextSection($row['text_section_id'], "@unknown");
+                $section = new TextSection($row['text_section_id'],  $row['text_section_name']);
                 // Add line to it
                 $section->addLine($row['text']);
             }

@@ -205,8 +205,8 @@ class TabletSection {
     private int insertTabletSection(Connection conn, int tabletObjectId)
             throws SQLException {
         String query = "INSERT INTO `text_section` "
-                     + "(`tablet_object_id`, `text_section_type_id`, `section_text`) "
-                     + "VALUES (?, ?, ?)";
+                     + "(`tablet_object_id`, `text_section_type_id`, `text_section_name`, `section_text`) "
+                     + "VALUES (?, ?, ?, ?)";
         String text = "";
         for (String line : this.lines) {
             text += line + " ";
@@ -215,7 +215,8 @@ class TabletSection {
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             // Indices are 1-based
             stmt.setInt(1, tabletObjectId);
-            stmt.setString(3, text);
+            stmt.setString(3, this.title);
+            stmt.setString(4, text);
 
             if (sectionType == null) {
                 stmt.setNull(2, java.sql.Types.INTEGER);
