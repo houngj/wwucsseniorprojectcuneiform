@@ -21,7 +21,7 @@ function dumpResult($result) {
 }
 
 include 'tablet.php';
-include 'connections/aws.php';
+include 'connections/connection.php';
 
 $pdo = getConnection();
 $results_per_page = 10;

@@ -1,6 +1,6 @@
 <?php
 
-function getConnection() {
+function newConnection() {
     $host = "localhost";
     $db   = "cuneiform";
     $user = "dingo";

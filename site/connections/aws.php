@@ -1,6 +1,6 @@
 <?php
 
-function getConnection() {
+function newConnection() {
     $host = "wwu-cuneiform.co5tt9crocw2.us-west-2.rds.amazonaws.com";
     $db   = "cuneiform";
     $user = "dingo";

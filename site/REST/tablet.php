@@ -1,5 +1,5 @@
 <?php
-include("../connections/aws.php");
+include("../connections/connection.php");
 include("../tablet.php");
 $pdo = getConnection();
 
