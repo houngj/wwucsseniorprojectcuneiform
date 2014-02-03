@@ -44,16 +44,25 @@ if (isset($_GET['search'])) {
 
 }
 
-function buildQuery() {
+function buildQuery() {    
     global $page, $search, $query;
     $start_limit = ($page - 1) * 10;
 
-    $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query')) as score\n" .
-            "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
-            "WHERE MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)\n" .
-            "GROUP BY t.tablet_id\n" .
-            "ORDER BY `score` DESC\n" .
-            "LIMIT $start_limit,10";
+    if (isset($_GET['regex_submit'])) {
+        $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id\n" .
+               "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
+               "WHERE ts.section_text REGEXP '$search'\n" .
+               "GROUP BY t.tablet_id\n" .
+               "LIMIT $start_limit,10";
+    } else {
+        $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query')) as score\n" .
+               "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
+               "WHERE MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)\n" .
+               "GROUP BY t.tablet_id\n" .
+               "ORDER BY `score` DESC\n" .
+               "LIMIT $start_limit,10";
+    }
+    echo "<pre style='text-align:left'>", $sql, "</pre>";
     return $sql;
 }
 
@@ -82,7 +91,9 @@ function printResults($result) {
     global $numResults;
     echo "<p>Returned $numResults results</p>";
     while ($row = $result->fetch()) {
-        echo "<h3>", $row['score'], "</h3>";
+        if (isset($row['score'])) {
+            echo "<h3>", $row['score'], "</h3>";
+        }
         printTablet($row['tablet_id']);
     }
 }
@@ -92,6 +103,10 @@ function printPagination() {
 
     $lastPage = (int) (($numResults + $results_per_page - 1) / $results_per_page);
     $baseUrl = $php_self . "?search=" . $search;
+
+    if(isset($_GET['regex_submit'])) {
+        $baseUrl = $baseUrl . "&regex_submit=" . $_GET['regex_submit'];
+    }
 
     $minPage = max(1, $page - 2);
     $maxPage = min($minPage + 4, $lastPage);
@@ -156,9 +171,10 @@ function printPagination() {
                 <form action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
                         <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) {echo $search;} ?>">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">Go!</button>
-                        </span>
+                        <div class="input-group-btn">
+                            <input type="submit" class="btn btn-default" tabindex="-1" name="submit" value="Search" />
+                            <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
+                        </div>
                     </div><!-- /input-group -->
                 </form>
                 <div id="tablet-output">
@@ -239,7 +255,7 @@ function printPagination() {
 
 
 <?php
-$result = $pdo->query("SHOW PROFILE;")->fetchAll(PDO::FETCH_ASSOC);
+$result = $pdo->query("SHOW PROFILES;")->fetchAll(PDO::FETCH_ASSOC);
 if (empty($result) == false) {
     dumpResult($result);
 }
