@@ -70,8 +70,36 @@ function graphDates(search) {
     });
 }
 
+function preg_quote( str ) {
+    // http://kevin.vanzonneveld.net
+    // +   original by: booeyOH
+    // +   improved by: Ates Goral (http://magnetiq.com)
+    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // +   bugfixed by: Onno Marsman
+    // *     example 1: preg_quote("$40");
+    // *     returns 1: '\$40'
+    // *     example 2: preg_quote("*RRRING* Hello?");
+    // *     returns 2: '\*RRRING\* Hello\?'
+    // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
+    // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
+
+    return (str+'').replace(/([\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:])/g, "\\$1");
+}
+
+
+function boldNames(names) {
+    $('.panel-body').each(function(i, obj) {
+        var html = obj.innerHTML;
+        for (var j = 0; j < names.length; ++j) {
+            html = html.replace(new RegExp("(>|[ ]+)(" + preg_quote(names[j].name_text) + ")([ ]+|<)", 'gi'), "$1<strong>$2</strong>$3");
+        }
+        obj.innerHTML = html;
+    });
+}
+
 function graphNames(search) {
     $.getJSON("./REST/names.php", "search=" + search, function(data) {
+        boldNames(data);
         var dataArray = [['Name', 'Count']];
 
         for (var i = 0; i < Math.min(data.length, 20); ++i) {
