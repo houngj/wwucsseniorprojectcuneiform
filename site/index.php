@@ -2,26 +2,10 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-function dumpResult($result) {
-    echo "<table width=100%>";
 
-    echo "<tr>";
-    foreach ($result[0] as $key => $value) {
-        echo "<th>" . $key . "</th>";
-    }
-    echo "</tr>";
-    foreach ($result as $row) {
-        echo "<tr>";
-        foreach ($row as $colum) {
-            echo "<td>" . $colum . "</td>";
-        }
-        echo "</tr>";
-    }
-    echo "</table>";
-}
-
-include 'tablet.php';
 include 'connections/connection.php';
+include 'tools/tablet.php';
+include 'tools/functions.php';
 
 $pdo = getConnection();
 $results_per_page = 10;
@@ -40,11 +24,9 @@ if (isset($_GET['search'])) {
     foreach (explode(" ", $search) as $term) {
         $query .= '+"' . $term . '"';
     }
-} else {
-
 }
 
-function buildQuery() {    
+function buildQuery() {
     global $page, $search, $query;
     $start_limit = ($page - 1) * 10;
 
@@ -66,12 +48,6 @@ function buildQuery() {
     return $sql;
 }
 
-function divit($string) {
-    echo "<div class='panel panel-default'>";
-    echo $string;
-    echo "</div>";
-}
-
 function printTablet($tablet_id) {
     global $pdo;
     $tablet = new Tablet($tablet_id, $pdo);
@@ -91,9 +67,6 @@ function printResults($result) {
     global $numResults;
     echo "<p>Returned $numResults results</p>";
     while ($row = $result->fetch()) {
-        if (isset($row['score'])) {
-            echo "<h3>", $row['score'], "</h3>";
-        }
         printTablet($row['tablet_id']);
     }
 }
@@ -257,6 +230,6 @@ function printPagination() {
 <?php
 $result = $pdo->query("SHOW PROFILES;")->fetchAll(PDO::FETCH_ASSOC);
 if (empty($result) == false) {
-    dumpResult($result);
+    dumpResultTable($result);
 }
 ?>
