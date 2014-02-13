@@ -6,8 +6,8 @@
  * which connection is used, change the include here.
  */
 
-include("aws.php");
-// include("localhost.php");
+// include("aws.php");
+include("localhost.php");
 
 function getConnection() {
     return newConnection();
