@@ -120,11 +120,11 @@ class TabletFactory {
         return (c == '$' || c == '#');
     }
 
-    private static String stripLineNumber(String line) {
+    static String stripLineNumber(String line) {
         for (int i = 0; i < line.length(); ++i) {
             char c = line.charAt(i);
-            if ((c < '0' || '9' < c) && c != '.' && c != '\'' && c != ' ') {
-                return line.substring(i);
+            if ((c < '0' || '9' < c) && c != '.' && c != '\'') {
+                return line.substring(i).trim();
             }
         }
         return "";
