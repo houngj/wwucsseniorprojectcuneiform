@@ -111,8 +111,7 @@ function graphNames(search) {
             'title': 'Name Distribution',
             'width': 1000,
             'height': 700,
-            'hAxis.slantedText': true,
-            'hAxis.slantedTextAngle': 90
+            'hAxis': {slantedText: true, slantedTextAngle: 80}
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('name_chart_div'));
