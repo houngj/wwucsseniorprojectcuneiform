@@ -116,12 +116,34 @@ function printPagination() {
 
         <!-- Custom styles for this template -->
         <link href="css/starter-template.css" rel="stylesheet">
-
+        
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
+       
+        <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
+        <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- The real deal -->
+        <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
+        
+        <script>
+                jQuery(document).ready(function($){
+                //you can now use $ as your jQuery object.
+                    $('#tags').tagit({
+                        // This will make Tag-it submit a single form value, as a comma-delimited field.
+                        singleField: true,
+                        singleFieldNode: $('#search'),
+                        singleFieldDelimiter: ' '
+                    });
+                });
+ 
+        </script>
+        
     </head>
 
     <body>
@@ -143,7 +165,8 @@ function printPagination() {
                 <h1>Tablet Search</h1>
                 <form action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
-                        <input type="text" name="search" id="search" class="form-control" value="<?php if (isset($search)) {echo $search;} ?>">
+                        <input type="hidden" name="search" id="search" value="<?php if (isset($search)) {echo $search;} ?>">
+                        <ul id="tags"></ul>
                         <div class="input-group-btn">
                             <input type="submit" class="btn btn-default" tabindex="-1" name="submit" value="Search" />
                             <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
