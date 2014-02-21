@@ -133,12 +133,14 @@ function printPagination() {
         
         <script>
                 jQuery(document).ready(function($){
-                //you can now use $ as your jQuery object.
                     $('#tags').tagit({
                         // This will make Tag-it submit a single form value, as a comma-delimited field.
                         singleField: true,
                         singleFieldNode: $('#search'),
-                        singleFieldDelimiter: ' '
+                        singleFieldDelimiter: ' ',
+                        afterTagRemoved: function() {
+                            $('#searchform').submit(); //Submit the form
+                        }
                     });
                 });
  
@@ -163,12 +165,12 @@ function printPagination() {
         <div class="container">
             <div class="starter-template">
                 <h1>Tablet Search</h1>
-                <form action="<?php echo $php_self; ?>" method="get">
+                <form name="searchform" id="searchform" action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
                         <input type="hidden" name="search" id="search" value="<?php if (isset($search)) {echo $search;} ?>">
                         <ul id="tags" class="form-control"></ul>
                         <div class="input-group-btn">
-                            <input type="submit" class="btn btn-default" tabindex="-1" name="submit" value="Search" />
+                            <input type="submit" class="btn btn-default" tabindex="-1" name="submit_form" value="Search" />
                             <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
                         </div>
                     </div><!-- /input-group -->
