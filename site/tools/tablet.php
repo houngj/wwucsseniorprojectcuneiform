@@ -1,5 +1,7 @@
 <?php
 
+
+
 class Tablet implements JsonSerializable {
     private $id;
     private $name;
@@ -141,13 +143,27 @@ class TextSection implements JsonSerializable{
         array_push($this->lines, $line);
     }
 
+    public function insertmarks($line){
+    	global $termlist;
+	$pieces = explode(" ", htmlspecialchars($line));
+	for($x=0; $x< sizeof($pieces); $x++){
+		  if(in_array($pieces[$x], $termlist)){
+			$pieces[$x] = "<mark>".$pieces[$x]."</mark>";
+		  }
+   	}
+	return implode(" ", $pieces);
+    }
+
     public function display() {
+    	   
+	
         echo "<div class=\"panel panel-default\">\n" .
              "<div class = \"panel-heading\">" . $this->name . "</div>\n" .
              "<div class = \"panel-body\">\n";
         echo "<ol>\n";
         foreach ($this->lines as $line) {
-            echo "<li>", htmlspecialchars($line), "</li>";
+	    $line = $this->insertmarks($line);	         
+            echo "<li>", $line, "</li>";
         }
         echo "</ol>";
         echo "</div></div>";

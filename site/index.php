@@ -19,10 +19,12 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
 }
 
 if (isset($_GET['search'])) {
+    $termlist = array();
     $search = htmlspecialchars(trim($_GET['search']));
     $query = "";
     foreach (explode(" ", $search) as $term) {
         $query .= '+"' . $term . '"';
+	$termlist[] = $term;
     }
 }
 
@@ -50,6 +52,8 @@ function buildQuery() {
 
 function printTablet($tablet_id) {
     global $pdo;
+    //list of search elements
+    global $termlist;
     $tablet = new Tablet($tablet_id, $pdo);
     $tablet->display();
 }
@@ -161,7 +165,9 @@ function printPagination() {
                         <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#name-modal">Name Distribution</button>
                     </div>
                     <?php
+		  
                         printResults($result);
+			
                         printPagination();
                     }
                     ?>
