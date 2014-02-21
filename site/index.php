@@ -166,7 +166,7 @@ function printPagination() {
                 <form action="<?php echo $php_self; ?>" method="get">
                     <div class="input-group">
                         <input type="hidden" name="search" id="search" value="<?php if (isset($search)) {echo $search;} ?>">
-                        <ul id="tags"></ul>
+                        <ul id="tags" class="form-control"></ul>
                         <div class="input-group-btn">
                             <input type="submit" class="btn btn-default" tabindex="-1" name="submit" value="Search" />
                             <input type="submit" class="btn btn-default" tabindex="-1" name="regex_submit" value="Regex Search" />
