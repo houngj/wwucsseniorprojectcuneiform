@@ -104,7 +104,7 @@ class TabletObject implements JsonSerializable{
 
     public function display() {
         echo "<div class=\"panel panel-default\">\n",
-             "<div class = \"panel-heading\">", $this->name, "</div>\n",
+             "<div class = \"panel-heading\"><span class=\"expand-text\">", $this->name, "</span></div>\n",
              "<div class = \"panel-body\">";
         foreach ($this->sections as $section) {
             $section->display();

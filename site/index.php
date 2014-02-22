@@ -142,8 +142,20 @@ function printPagination() {
                             $('#searchform').submit(); //Submit the form
                         }
                     });
+                    
+                    $(document).on('click','.expand-text',function(){      
+                        var $Element = $(this).parent().parent().find(".panel-body");
+
+                        if($Element.is(":visible"))
+                        {           
+                            $Element.hide();
+                        }
+                        else
+                        {
+                            $Element.show();
+                        }       
+                    });
                 });
- 
         </script>
         
     </head>
