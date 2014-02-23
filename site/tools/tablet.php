@@ -62,7 +62,7 @@ class Tablet implements JsonSerializable {
 
     public function display() {
         echo "<div class=\"panel panel-default\">\n" .
-             "<div class = \"panel-heading\">" . $this->name . "</div>\n" .
+             "<div class = \"panel-heading\"><a href=\"http://www.cdli.ucla.edu/search/search_results.php?SearchMode=Text&ObjectID=" . substr($this->name, 1,7) . "&requestFrom=Submit+Query\">$this->name</a></div>\n" .
              "<div class = \"panel-body\">";
 
         foreach ($this->objects as $object) {
@@ -104,7 +104,7 @@ class TabletObject implements JsonSerializable{
 
     public function display() {
         echo "<div class=\"panel panel-default\">\n",
-             "<div class = \"panel-heading\">", $this->name, "</div>\n",
+             "<div class = \"panel-heading\"><span class=\"expand-text\">", $this->name, "</span></div>\n",
              "<div class = \"panel-body\">";
         foreach ($this->sections as $section) {
             $section->display();
