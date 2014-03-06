@@ -1,19 +1,18 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
 include("../connections/connection.php");
-
-$search = htmlspecialchars(trim($_GET['search']));
-$query = "";
-foreach (explode(" ", $search) as $term) {
-    $query .= '+"' . $term . '"';
+include("../tools/functions.php");
+$start_time = microtime(true);
+if (!isset($_GET['search'])) {
+    http_response_code(400);
+    die("search isn't set");
 }
-
+$search = makeQuery($_GET['search']);
 $pdo = getConnection();
 
 $subQuery = "SELECT t.tablet_id\n" .
             "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
-            "WHERE MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)\n" .
+            "WHERE MATCH(ts.section_text) AGAINST('$search' IN BOOLEAN MODE)\n" .
             "GROUP BY t.tablet_id";
 
 $query   =  "SELECT cy.*, COUNT(*) as count\n" .
@@ -23,5 +22,8 @@ $query   =  "SELECT cy.*, COUNT(*) as count\n" .
             "GROUP BY cy.canonical_year_id;";
 
 $result = $pdo->query($query);
-echo json_encode($result->fetchAll(PDO::FETCH_ASSOC), JSON_PRETTY_PRINT);
+echo json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+debugLog(["FILE"  => "REST/dates.php",
+          "QUERY" => $search,
+          "TIME"  => microtime(true) - $start_time]);
 ?>

@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
+$start_time = microtime(true);
 
 include 'connections/connection.php';
 include 'tools/tablet.php';
@@ -120,13 +120,13 @@ function printPagination() {
 
         <!-- Custom styles for this template -->
         <link href="css/starter-template.css" rel="stylesheet">
-        
+
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
-       
+
         <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
         <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
@@ -134,7 +134,7 @@ function printPagination() {
 
         <!-- The real deal -->
         <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
-        
+
         <script>
                 jQuery(document).ready(function($){
                     $('#tags').tagit({
@@ -146,22 +146,22 @@ function printPagination() {
                             $('#searchform').submit(); //Submit the form
                         }
                     });
-                    
-                    $(document).on('click','.expand-text',function(){      
+
+                    $(document).on('click','.expand-text',function(){
                         var $Element = $(this).parent().parent().find(".panel-body");
 
                         if($Element.is(":visible"))
-                        {           
+                        {
                             $Element.hide();
                         }
                         else
                         {
                             $Element.show();
-                        }       
+                        }
                     });
                 });
         </script>
-        
+
     </head>
 
     <body>
@@ -202,9 +202,9 @@ function printPagination() {
                         <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#name-modal">Name Distribution</button>
                     </div>
                     <?php
-		  
+
                         printResults($result);
-			
+
                         printPagination();
                     }
                     ?>
@@ -274,5 +274,10 @@ function printPagination() {
 $result = $pdo->query("SHOW PROFILES;")->fetchAll(PDO::FETCH_ASSOC);
 if (empty($result) == false) {
     dumpResultTable($result);
+}
+if (isset($query)) {
+    debugLog(["FILE"  => "index.php",
+              "QUERY" => $query,
+              "TIME"  => microtime(true) - $start_time]);
 }
 ?>
