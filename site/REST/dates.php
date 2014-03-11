@@ -8,6 +8,17 @@ if (!isset($_GET['search'])) {
     die("search isn't set");
 }
 $search = makeQuery($_GET['search']);
+$cache = getMemcached();
+$cache_key = __FILE__ . $search;
+
+if ($cache !== FALSE && ($return_value = $cache->get($cache_key)) !== FALSE) {
+    echo $return_value;
+    debugLog(["FILE"  => "REST/dates.php",
+              "QUERY" => $search,
+              "CACHE" => "HIT",
+              "TIME"  => microtime(true) - $start_time]);
+    exit();
+}
 $pdo = getConnection();
 
 $subQuery = "SELECT t.tablet_id\n" .
@@ -22,8 +33,13 @@ $query   =  "SELECT cy.*, COUNT(*) as count\n" .
             "GROUP BY cy.canonical_year_id;";
 
 $result = $pdo->query($query);
-echo json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+$return_value = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+echo $return_value;
+if ($cache !== FALSE) {
+    $cache->set($cache_key, $return_value);
+}
 debugLog(["FILE"  => "REST/dates.php",
           "QUERY" => $search,
+          "CACHE" => "MISS",
           "TIME"  => microtime(true) - $start_time]);
 ?>

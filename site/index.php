@@ -8,6 +8,7 @@ include 'tools/tablet.php';
 include 'tools/functions.php';
 
 $pdo = getConnection();
+$cache = getMemcached();
 $results_per_page = 10;
 
 $php_self = $_SERVER['PHP_SELF'];
@@ -24,27 +25,24 @@ if (isset($_GET['search'])) {
     $query = "";
     foreach (explode(" ", $search) as $term) {
         $query .= '+"' . $term . '"';
-	$termlist[] = $term;
+        $termlist[] = $term;
     }
 }
 
 function buildQuery() {
-    global $page, $search, $query;
-    $start_limit = ($page - 1) * 10;
+    global $search, $query;
 
     if (isset($_GET['regex_submit'])) {
-        $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id\n" .
+        $sql = "SELECT t.tablet_id\n" .
                "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
                "WHERE ts.section_text REGEXP '$search'\n" .
-               "GROUP BY t.tablet_id\n" .
-               "LIMIT $start_limit,10";
+               "GROUP BY t.tablet_id\n";
     } else {
-        $sql = "SELECT SQL_CALC_FOUND_ROWS t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query')) as score\n" .
+        $sql = "SELECT t.tablet_id, SUM(MATCH(ts.section_text) AGAINST('$query')) as score\n" .
                "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
                "WHERE MATCH(ts.section_text) AGAINST('$query' IN BOOLEAN MODE)\n" .
                "GROUP BY t.tablet_id\n" .
-               "ORDER BY `score` DESC\n" .
-               "LIMIT $start_limit,10";
+               "ORDER BY `score` DESC\n";
     }
     echo "<pre style='text-align:left'>", $sql, "</pre>";
     return $sql;
@@ -59,19 +57,35 @@ function printTablet($tablet_id) {
 }
 
 function getResults() {
-    global $pdo, $numResults;
+    global $pdo, $numResults, $cache, $cache_hit, $cache_key;
     $sql = buildQuery();
+    $cache_key = __FILE__ . md5($sql);
+
+    if ($cache !== FALSE && ($rv = $cache->get($cache_key)) !== FALSE) {
+        $cache_hit = "HIT";
+        $numResults = $rv['num_results'];
+        return $rv['result'];
+    }
+
     $result = $pdo->query($sql);
-    $foundRows = $pdo->query("SELECT FOUND_ROWS();")->fetch();
-    $numResults = $foundRows["FOUND_ROWS()"];
-    return $result;
+    $numResults = $result->rowCount();
+
+    $output = [ "num_results" => $numResults, "result" => $result->fetchAll(PDO::FETCH_ASSOC)];
+
+    if($cache !== FALSE) {
+        $cache->set($cache_key, $output);
+    }
+    $cache_hit = "MISS";
+    return $output['result'];
 }
 
 function printResults($result) {
-    global $numResults;
+    global $numResults, $page;
     echo "<p>Returned $numResults results</p>";
-    while ($row = $result->fetch()) {
-        printTablet($row['tablet_id']);
+    $start_limit = ($page - 1) * 10;
+    $end_limit = min($start_limit + 10, $numResults);
+    for ($i = $start_limit; $i < $end_limit; ++$i) {
+        printTablet($result[$i]['tablet_id']);
     }
 }
 
@@ -79,7 +93,7 @@ function printPagination() {
     global $results_per_page, $page, $search, $php_self, $numResults;
 
     $lastPage = (int) (($numResults + $results_per_page - 1) / $results_per_page);
-    $baseUrl = $php_self . "?search=" . $search;
+    $baseUrl = $php_self . "?search=" . urlencode($search);
 
     if(isset($_GET['regex_submit'])) {
         $baseUrl = $baseUrl . "&regex_submit=" . $_GET['regex_submit'];
@@ -277,7 +291,8 @@ if (empty($result) == false) {
 }
 if (isset($query)) {
     debugLog(["FILE"  => "index.php",
-              "QUERY" => $query,
+              "QUERY" => $cache_key,
+              "CACHE" => $cache_hit,
               "TIME"  => microtime(true) - $start_time]);
 }
 ?>

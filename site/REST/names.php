@@ -7,6 +7,18 @@ if (!isset($_GET['search'])) {
 }
 $start_time = microtime(true);
 $search = makeQuery($_GET['search']);
+$cache = getMemcached();
+$cache_key = __FILE__ . $search;
+
+if ($cache !== FALSE && ($return_value = $cache->get($cache_key)) !== FALSE) {
+    echo $return_value;
+    debugLog(["FILE"  => "REST/names.php",
+              "QUERY" => $search,
+              "CACHE" => "HIT",
+              "TIME"  => microtime(true) - $start_time]);
+    exit();
+}
+
 $pdo = getConnection();
 
 $subQuery =     "SELECT t.tablet_id\n" .
@@ -21,8 +33,13 @@ $query =     "SELECT n.name_text, COUNT(*) AS count\n" .
              "ORDER BY count DESC";
 
 $result = $pdo->query($query);
-echo json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+$return_value = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+echo $return_value;
+if ($cache !== FALSE) {
+    $cache->set($cache_key, $return_value);
+}
 debugLog(["FILE"  => "REST/names.php",
           "QUERY" => $search,
+          "CACHE" => "MISS",
           "TIME"  => microtime(true) - $start_time]);
 ?>

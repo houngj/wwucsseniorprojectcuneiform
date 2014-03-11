@@ -1,4 +1,5 @@
 <?php
+
 /*
  * USAGE:
  * use 'include("connections/connection.php");' in all files that need database
@@ -11,6 +12,14 @@ include("localhost.php");
 
 function getConnection() {
     return newConnection();
+}
+
+function getMemcached() {
+    if (!extension_loaded("memcached")) {
+        return false;
+    }
+    $m = new Memcached();
+    return ($m->addServer('localhost', 11211)) ? ($m) : (false);
 }
 
 ?>
