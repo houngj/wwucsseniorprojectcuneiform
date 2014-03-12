@@ -101,21 +101,23 @@ public class DateExtractor {
                     int monthIndex = line.indexOf(monthStart);
                     if (monthIndex != -1) {
                         String substring = line.substring(monthIndex + monthStart.length()).trim();
-                        FoundDate c = getConfidence(substring, knownMonths);
-                        t.setMonth(c);
-
-                        // TODO: load KnownDates into memory so that we can relate found date
-                        // references to the best KnownDate match.
-                        s.insertMonth(conn, substring, c);
+                        if (substring.isEmpty() == false) {
+                            FoundDate c = getConfidence(substring, knownMonths);
+                            t.setMonth(c);
+                            // TODO: load KnownDates into memory so that we can relate found date
+                            // references to the best KnownDate match.
+                            s.insertMonth(conn, substring, c);
+                        }
                     }
                     if (yearIndex != -1) {
                         String substring = line.substring(yearIndex + yearStart.length()).trim();
-                        FoundDate c = getConfidence(substring, knownYears);
-                        t.setYear(c);
-
-                        // TODO: load KnownDates into memory so that we can relate found date
-                        // references to the best KnownDate match.
-                        s.insertYear(conn, substring, c);
+                        if (substring.isEmpty() == false) {
+                            FoundDate c = getConfidence(substring, knownYears);
+                            t.setYear(c);
+                            // TODO: load KnownDates into memory so that we can relate found date
+                            // references to the best KnownDate match.
+                            s.insertYear(conn, substring, c);
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@ USE `cuneiform`;
 /* Create the dingo user, if it doesn't exist*/
 
 GRANT ALL ON `cuneiform`.* TO 'dingo'@'%'  IDENTIFIED BY 'hungry!';
+GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost'  IDENTIFIED BY 'hungry!';
 
 /* Create tables. */
 
@@ -317,7 +318,7 @@ INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('us2-sa bad3-an{ki
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('us2-sa ni3-ka9-ak al-la-ka mu us2-sa-bi', 'Szulgi 23*');
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('{d}szul-gi lugal-e a2 mah {d}en-lil2 sum-ma-ni...', 'Szulgi 23');
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('kara2-har{ki} ba-hul', 'Szulgi 24');
-INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('-sa kara2-har{ki} ba-hul', 'Szulgi 25*');
+INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('us2-sa kara2-har{ki} ba-hul', 'Szulgi 25*');
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('si-mu-ru-um{ki} ba-hul', 'Szulgi 25');
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('us2-sa si-mu-ru-um{ki} ba-hul', 'Szulgi 26*');
 INSERT INTO `canonical_year` (`text`, `abbreviation`) VALUES ('si-mu-ru-um{ki} a-ra2 2-kam-ma-asz ba-hul', 'Szulgi 26');

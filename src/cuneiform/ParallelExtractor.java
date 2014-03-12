@@ -33,7 +33,7 @@ class ParallelExtractor
     void clearDatabase() {
         final String[] tables = new String[] {
                 "line", "month_reference", "year_reference",
-                "text_section", "tablet_object", "tablet"
+                "text_section", "tablet_object", "name_reference", "tablet"
         };
         try (Connection conn = getConnection();
                 Statement stmnt = conn.createStatement()) {

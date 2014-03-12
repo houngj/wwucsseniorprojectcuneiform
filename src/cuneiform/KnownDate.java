@@ -32,6 +32,9 @@ class FoundDate
         this.date = date;
         this.foundDate = found;
         this.confidence = conf;
+        if (found.isEmpty()) {
+            throw new IllegalStateException();
+        }
     }
 
     public void printStats(PrintStream output) {
