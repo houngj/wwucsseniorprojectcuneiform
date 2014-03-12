@@ -1,12 +1,16 @@
 package cuneiform;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import cuneiform.stringComparator.Confidence;
 import cuneiform.stringComparator.StringComparator;
 import cuneiform.stringComparator.SumerianComparator;
-import java.sql.*;
+import cuneiform.stringComparator.SumerianLevenstheinSubstringComparator;
 
 public class DateExtractor {
     public final List<KnownDate>  knownMonths;
@@ -96,44 +100,54 @@ public class DateExtractor {
 
         for (TabletObject o : t.objects) {
             for (TabletSection s : o.sections) {
+                List<String> graphemeList = new ArrayList<>();
                 for (String line : s.lines) {
-                    int yearIndex = line.indexOf(yearStart);
-                    int monthIndex = line.indexOf(monthStart);
-                    if (monthIndex != -1) {
-                        String substring = line.substring(monthIndex + monthStart.length()).trim();
-                        if (substring.isEmpty() == false) {
-                            FoundDate c = getConfidence(substring, knownMonths);
-                            t.setMonth(c);
-                            // TODO: load KnownDates into memory so that we can relate found date
-                            // references to the best KnownDate match.
-                            s.insertMonth(conn, substring, c);
-                        }
+                    String[] graphs = line.split("-| ");
+                    for(String g :graphs) {
+                        graphemeList.add(g);
                     }
-                    if (yearIndex != -1) {
-                        String substring = line.substring(yearIndex + yearStart.length()).trim();
-                        if (substring.isEmpty() == false) {
-                            FoundDate c = getConfidence(substring, knownYears);
-                            t.setYear(c);
-                            // TODO: load KnownDates into memory so that we can relate found date
-                            // references to the best KnownDate match.
-                            s.insertYear(conn, substring, c);
-                        }
+                }
+                String[] graphemeArray = graphemeList.toArray(new String[graphemeList.size()]);
+                for (int i = 0; i < graphemeArray.length - 1; ++i) {
+                    String currentGrapheme = graphemeArray[i].replaceAll("[^A-Za-z0-9]", "");
+                    if (yearStart.equalsIgnoreCase(currentGrapheme)) {
+                        FoundDate c = getConfidence(graphemeArray, i + 1, knownYears);
+                        t.setYear(c);
+                        s.insertYear(conn, c.foundDate, c);
+                    } else if (monthStart.equalsIgnoreCase(currentGrapheme)) {
+                        FoundDate c = getConfidence(graphemeArray, i + 1, knownMonths);
+                        t.setMonth(c);
+                        s.insertMonth(conn, c.foundDate, c);
                     }
                 }
             }
         }
     }
 
-    private FoundDate getConfidence(String substring, List<KnownDate> dates) {
+    private FoundDate getConfidence(String[] graphemes, int i, List<KnownDate> dates) {
         KnownDate guess = null;
-        Confidence conf = new Confidence(Integer.MAX_VALUE, -1);
+        Confidence confd = new Confidence(Integer.MAX_VALUE, -1);
+        int bestIndex = 0;
+        double[] conf = new double[1];
+        int[]    indx = new int[1];
+        int[]    dist = new int[1];
+
         for (KnownDate d : dates) {
-            Confidence newConf = comparator.compare(d.getText(), substring);
-            if (newConf.compareTo(conf) > 0) {
-                conf = newConf;
+            SumerianLevenstheinSubstringComparator.compare(d.text, graphemes, i, conf, indx, dist);
+            if (conf[0] > confd.confidence) {
+                bestIndex = indx[0];
+                confd = new Confidence(dist[0], conf[0]);
                 guess = d;
             }
         }
-        return new FoundDate(guess, substring, conf);
+
+        String output = "";
+        for (int j = 0; j < bestIndex; ++j) {
+            if (output.isEmpty() == false)
+                output += " ";
+            output += graphemes[j + i];
+        }
+
+        return new FoundDate(guess, output, confd);
     }
 }
