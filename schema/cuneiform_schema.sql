@@ -543,3 +543,56 @@ CREATE TABLE `name_reference`
 -- personal names / titles / gender
 		-- question: gender binary in Sumerian ?  third gender ?
 -- location
+
+-- user schema
+
+CREATE TABLE `user`
+(
+	`user_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`name`
+		NVARCHAR(256)
+		NOT NULL
+);
+
+CREATE TABLE `archive`
+(
+	`archive_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`user_id`
+		INT
+		NOT NULL,
+	`name`
+		NVARCHAR(256)
+		NOT NULL
+		DEFAULT 'New Virtual Archive',
+
+	FOREIGN KEY (`user_id`)
+		REFERENCES `user` (`user_id`)
+);
+
+CREATE TABLE `archive_tablet`
+(
+	`archive_tablet_id`
+		INT
+		PRIMARY KEY
+		NOT NULL
+		AUTO_INCREMENT,
+	`archive_id`
+		INT
+		NOT NULL,
+	`tablet_id`
+		INT
+		NOT NULL,
+
+	FOREIGN KEY (`archive_id`)
+		REFERENCES `archive` (`archive_id`),
+	FOREIGN KEY (`tablet_id`)
+		REFERENCES `tablet` (`tablet_id`)
+);
