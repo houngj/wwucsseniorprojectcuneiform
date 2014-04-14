@@ -6,6 +6,7 @@ $start_time = microtime(true);
 include 'connections/connection.php';
 include 'tools/tablet.php';
 include 'tools/functions.php';
+include 'tools/user.php';
 
 $pdo = getConnection();
 $cache = getMemcached();
@@ -17,6 +18,22 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
     $page = $_GET['page'];
 } else {
     $page = 1;
+}
+
+if ( isset($_POST['logout']) )
+{
+    User::logout();
+}
+else if ( isset($_POST['username']) && isset($_POST['password']) )
+{
+    // TODO: User::login() returns false if the login was invalid.
+    // Do something with this.
+
+    User::login($pdo, $_POST['username'], $_POST['password']);
+}
+else
+{
+    User::continueSession();
 }
 
 if (isset($_GET['search'])) {
@@ -143,8 +160,8 @@ function printPagination() {
 
         <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
         <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- The real deal -->
         <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
@@ -187,6 +204,64 @@ function printPagination() {
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <!--
+                        <li><a href="#"><span class="glyphicon glyphicon-home"></span> Dashboard</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-picture"></span> Profile</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>
+                        -->
+
+<?php
+    if (User::isLoggedIn())
+    {
+?>
+
+                        <li>
+                            <form method="POST" id="logout">
+                                <input type="hidden" name="logout" value="1" />
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span class="glyphicon glyphicon-user" />
+                                        <?php print User::getName(); ?><!--<span class="caret" />-->
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#">profile</a></li>
+                                        <li class="divider" />
+                                        <li><a href="javascript:logout();">log out</a></li>
+                                    </ul>
+                                </div>
+                            </form>
+                        </li>
+
+<?php
+    }
+    else 
+    {
+?>
+
+                        <li>
+                            <form method="POST" id="login" class="navbar-form navbar-right">
+                                <span style="display: none;">
+                                    <a href="#" class="cuneiform-prepare-login"><span class="glyphicon glyphicon-user"></span> log in</a></li>
+                                </span>
+                                <div style="white-space: nowrap;">
+                                    <span class="glyphicon glyphicon-user" />
+                                    <input name="username" type="text" placeholder="username" class="form-control" size="8" />
+                                    <span class="glyphicon glyphicon-lock" />
+                                    <input name="password" type="password" placeholder="password" class="form-control" size="8" />
+                                    <button type="submit" class="btn btn-default">Log in</button>
+                                </div>
+                            </form>
+                        </li>                          
+
+<?php
+    }
+?>
+                        <!--
+                        <li><a href="#"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+                        -->
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -232,7 +307,6 @@ function printPagination() {
         <!--Bootstrap core JavaScript
         ================================================== -->
         <!--Placed at the end of the document so the pages load faster -->
-        <script src = "https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/site.js"></script>
         <script src="https://www.google.com/jsapi"></script>

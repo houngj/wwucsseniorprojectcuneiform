@@ -555,8 +555,16 @@ CREATE TABLE `user`
 		AUTO_INCREMENT,
 	`name`
 		NVARCHAR(256)
+		NOT NULL,
+	`hash`
+		VARCHAR(60)
 		NOT NULL
 );
+
+-- Create a default user
+
+INSERT INTO `user` (`name`, `hash`)
+	VALUES ('dingo', '$2y$10$VnFqkNsbrI0/5y75zJt7feyt0q1pg45T9fO.nLHFD.vK2uvgwBWJe');	-- hungry!
 
 CREATE TABLE `archive`
 (
