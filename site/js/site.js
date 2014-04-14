@@ -118,3 +118,8 @@ function graphNames(search) {
         chart.draw(chartData, options);
     });
 }
+
+function logout()
+{
+    $('#logout')[0].submit();
+}
