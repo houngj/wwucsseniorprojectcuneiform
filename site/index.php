@@ -162,11 +162,13 @@ function printPagination() {
         <link href="css/tagit.ui-zendesk.css" rel="stylesheet" type="text/css">
         <script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
         <!-- The real deal -->
         <script src="js/tag-it.js" type="text/javascript" charset="utf-8"></script>
 
         <script>
+                google.load("visualization", "1", {packages: ["corechart"]});
                 jQuery(document).ready(function($){
                     $('#tags').tagit({
                         // This will make Tag-it submit a single form value, as a comma-delimited field.
@@ -204,6 +206,7 @@ function printPagination() {
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Home</a></li>
+                        <li><a href="names_dates_graph.php">Attestation Graph</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <!--
@@ -309,9 +312,7 @@ function printPagination() {
         <!--Placed at the end of the document so the pages load faster -->
         <script src="js/bootstrap.min.js"></script>
         <script src="js/site.js"></script>
-        <script src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
-            google.load("visualization", "1", {packages: ["corechart"]});
             if (document.getElementById("search").value.length !== 0) {
                 graphDates(document.getElementById("search").value);
                 graphNames(document.getElementById("search").value);
