@@ -4,7 +4,7 @@ class User
 {
     public static function isLoggedIn()
     {
-        return (PHP_SESSION_ACTIVE == session_status());
+        return (isset($_SESSION) && isset($_SESSION['id']));
     }
 
     public static function getName()
