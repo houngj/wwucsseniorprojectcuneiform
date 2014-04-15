@@ -20,7 +20,7 @@ class ParallelExtractor
     private double              yearConf  = 0;
     private double              monthConf = 0;
 
-    private static final String DB_HOST = "jdbc:mysql://localhost/cuneiform";
+    private static final String DB_HOST = "jdbc:mysql://192.168.1.102/cuneiform";
     private static final String DB_USER = "dingo";
     private static final String DB_PASS = "hungry!";
 

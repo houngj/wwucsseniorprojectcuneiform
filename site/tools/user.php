@@ -1,7 +1,15 @@
 <?php
 
+if (!isset($_SESSION)) {
+    session_start();
+}
+
+include('archive.php');
+
 class User
 {
+    private static $errorMessage;
+
     public static function isLoggedIn()
     {
         return (isset($_SESSION) && isset($_SESSION['id']));
@@ -26,26 +34,28 @@ class User
 
         return 0;
     }
+    
+    public static function getErrorMessage() {
+        return User::$errorMessage;
+    }
 
     private static function beginSession($id, $name)
     {
-        session_start();
-
         $_SESSION['id']   = $id;
         $_SESSION['name'] = $name;
     }
 
     public static function logout()
     {
+        // Frees all $_SESSION variables
         session_unset();
     }
 
     public static function continueSession()
     {
-        session_start();
     }
 
-    public static function login($pdo, $name, $pass)
+    public static function login(PDO $pdo, $name, $pass)
     {
         $sql =
             'SELECT U.user_id, U.name, U.hash
@@ -79,11 +89,42 @@ class User
                     $row['user_id'],
                     $row['name']
                 );
+                // No error.
+                User::$errorMessage = null;
+            } 
+            else 
+            {
+                // Invalid password.
+                User::$errorMessage = "Invalid username or password";
             }
         }
 
         return $success;
     }
+    
+    private static function getArchives(PDO $pdo) {
+        $sql = "SELECT * FROM `archive` WHERE `user_id`= :user_id";
+        $statement = $pdo->prepare($sql);
+        // Bind user_id
+        $statement->execute([':user_id' => User::getUserId()]);
+        // Get results
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $output = array();
+        foreach($result as $row) {
+            $output[] = new Archive($row['archive_id'], $pdo);
+        }
+        return $output;
+    }
+
+    public static function printArchives(PDO $pdo) {
+        $archives = User::getArchives($pdo);
+        echo "<ul style=\"list-style-type:none\">\n";
+        foreach ($archives as $archive){
+            $archive->display();
+        }
+        echo "</ul>";
+    }
+
 }
 
 ?>

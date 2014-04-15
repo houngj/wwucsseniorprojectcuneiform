@@ -1,99 +1,156 @@
 <?php
 
-
-
 class Tablet implements JsonSerializable {
+
     private $id;
     private $name;
     private $lang;
     private $objects;
+    private $names;
 
     public function __construct($id, PDO $pdo) {
-        $this->id  = $id;
-        $sql       = "SELECT t.tablet_id, t.name, t.lang, o.tablet_object_id, o.obj_name, ts.text_section_id, l.text, ts.text_section_name\n" .
-                     "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts NATURAL JOIN `line` l\n" .
-                     "WHERE t.tablet_id = " . $id;
-        try {
-            $result = $pdo->query($sql)->fetchAll();
-            if (empty($result)) {
-                throw new Exception("Query returned no results", 0, NULL);
-            }
-        } catch (Exception $e) {
-            echo 'Caught exception: ' . $e->getMessage() . "\n";
-            echo $sql;
-        }
-        $this->name    = $result[0]['name'];
-        $this->lang    = $result[0]['lang'];
-        $this->objects = $this->buildObjects($result);
+        $this->id = $id;
+        $this->fetchTabletData($pdo); // Sets $this->{name, lang}
+        $this->objects = $this->fetchObjects($pdo);
+        $this->names = $this->fetchNames($pdo);
     }
 
-    private function buildObjects($result) {
-        $outputObjects = array();
-        $object = NULL;
-        $section = NULL;
+    private function fetchTabletData(PDO $pdo) {
+        $sql = "SELECT * FROM `tablet` WHERE `tablet_id` = :tablet_id";
+        $statement = $pdo->prepare($sql);
+        $statement->execute([':tablet_id' => $this->id]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        $this->name = $row['name'];
+        $this->lang = $row['lang'];
+    }
+
+    private function fetchNames(PDO $pdo) {
+        $sql = "SELECT `name_text` FROM `name_reference` NATURAL JOIN `name` WHERE `tablet_id` = :tablet_id";
+        $statement = $pdo->prepare($sql);
+        // Bind :tablet_id to $this->id
+        $statement->execute([':tablet_id' => $this->id]);
+        // Get results
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        // Converts from an array of arrays of strings to an array of strings.
+        return array_column($result, 'name_text');
+    }
+
+    private function fetchObjects(PDO $pdo) {
+        $sql = "SELECT * FROM `tablet_object` WHERE `tablet_id` = :tablet_id";
+        $statement = $pdo->prepare($sql);
+        // Bind :tablet_id to $this->id
+        $statement->execute([':tablet_id' => $this->id]);
+        // Get results
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $output = array();
         foreach ($result as $row) {
-            if ($object == NULL) {
-                $object = new TabletObject($row['tablet_object_id'], $row['obj_name']);
-            }
-            if ($section == NULL) {
-                $section = new TextSection($row['text_section_id'], $row['text_section_name']);
-            }
-
-            if ($section->getID() == $row['text_section_id']) {
-                $section->addLine($row['text']); // Same section, add line to it.
-            } else {
-                // New section, add current section to current object
-                $object->addSection($section);
-                // Create new TextSection
-                $section = new TextSection($row['text_section_id'],  $row['text_section_name']);
-                // Add line to it
-                $section->addLine($row['text']);
-            }
-
-            if ($object->getID() != $row['tablet_object_id']) {
-                // New object, add current object to outputObjects
-                array_push($outputObjects, $object);
-                // Create new TabletObject
-                $object = new TabletObject($row['tablet_object_id'], $row['obj_name']);
-            }
+            // Append the new TabletObject to $output
+            $output[] = new TabletObject($row['tablet_object_id'], $row['obj_name'], $pdo);
         }
-        $object->addSection($section);
-        array_push($outputObjects, $object);
-        return $outputObjects;
+        return $output;
     }
 
-    public function display() {
-        echo "<div class=\"panel panel-default\">\n" .
-             "<div class = \"panel-heading\"><a href=\"http://www.cdli.ucla.edu/search/search_results.php?SearchMode=Text&ObjectID=" . substr($this->name, 1,7) . "&requestFrom=Submit+Query\">$this->name</a></div>\n" .
-             "<div class = \"panel-body\">";
+    public function display($termlist) {
+        $cdliUrl = "http://www.cdli.ucla.edu/search/search_results.php?SearchMode=Text&ObjectID=" . substr($this->name, 1, 7) . "&requestFrom=Submit+Query";
+        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <?php echo $this->name; ?>
+                <div class="btn-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            Add To <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">New Virtual Archive</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Virtual Archive 1</a></li>
+                            <li><a href="#">Virtual Archive 2</a></li>
+                            <li><a href="#">Virtual Archive 3</a></li>
+                            <li><a href="#">Empty Virtual Archive</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            View At <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="<?php echo $cdliUrl; ?>">CDLI</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel-body col-md-8">
+                    <?php
+                    foreach ($this->objects as $object) {
+                        $object->display($termlist, $this->names);
+                    }
+                    ?>
+                </div>
+                <div class="panel-body col-md-4">
+                    <?php $this->displayNames(); ?>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
 
-        foreach ($this->objects as $object) {
-            $object->display();
-        }
-
-        echo "</div></div>";
+    private function displayNames() {
+        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">Tablet Contents</div>
+            <ul style="list-style: none;">
+                <li><span class="glyphicon glyphicon-minus-sign list-minimizer"></span> Names
+                    <ul>
+                        <?php
+                        foreach ($this->names as $n) {
+                            echo "<li>$n</li>\n";
+                        }
+                        ?>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <?php
     }
 
     public function jsonSerialize() {
         return [
-                   'id'      => $this->id,
-                   'name'    => $this->name,
-                   'lang'    => $this->lang,
-                   'objects' => $this->objects
-               ];
+            'id' => $this->id,
+            'name' => $this->name,
+            'lang' => $this->lang,
+            'objects' => $this->objects
+        ];
     }
 
 }
 
-class TabletObject implements JsonSerializable{
+class TabletObject implements JsonSerializable {
+
     private $id;
     private $name;
     private $sections;
 
-    public function __construct($id, $name) {
-        $this->id       = $id;
-        $this->name     = $name;
-        $this->sections = array();
+    public function __construct($id, $name, PDO $pdo) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->sections = $this->fetchSections($pdo);
+    }
+
+    private function fetchSections(PDO $pdo) {
+        $sql = "SELECT * FROM `text_section` WHERE `tablet_object_id` = :tablet_object_id";
+        $statement = $pdo->prepare($sql);
+        // Bind :tablet_id to $this->id
+        $statement->execute([':tablet_object_id' => $this->id]);
+        // Get results
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $output = array();
+        foreach ($result as $row) {
+            // Append the new Text Section to $output
+            $output[] = new TextSection($row['text_section_id'], $row['text_section_name'], $pdo);
+        }
+        return $output;
     }
 
     public function getID() {
@@ -104,79 +161,108 @@ class TabletObject implements JsonSerializable{
         array_push($this->sections, $section);
     }
 
-    public function display() {
-        echo "<div class=\"panel panel-default\">\n",
-             "<div class = \"panel-heading\"><span class=\"expand-text\">", $this->name, "</span></div>\n",
-             "<div class = \"panel-body\">";
-        foreach ($this->sections as $section) {
-            $section->display();
-        }
-        echo "</div></div>";
+    public function display(array $termlist, array $names) {
+        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a data-toggle=collapse data-target="<?php echo "#tablet-object-$this->id"; ?>">
+                    <?php echo $this->name; ?>
+                </a>
+            </div>
+            <div class="panel-body collapse in" id="<?php echo "tablet-object-$this->id"; ?>" >
+                <?php
+                foreach ($this->sections as $section) {
+                    $section->display($termlist, $names);
+                }
+                ?>
+            </div>
+        </div>
+        <?php
     }
 
     public function jsonSerialize() {
         return [
-                   'id'       => $this->id,
-                   'name'     => $this->name,
-                   'sections' => $this->sections
-               ];
+            'id' => $this->id,
+            'name' => $this->name,
+            'sections' => $this->sections
+        ];
     }
 
 }
 
-class TextSection implements JsonSerializable{
+class TextSection implements JsonSerializable {
+
     private $id;
     private $name;
     private $lines;
 
-    public function __construct($id, $name) {
-        $this->id    = $id;
-        $this->name  = $name;
-        $this->lines = array();
+    public function __construct($id, $name, PDO $pdo) {
+        $this->id = $id;
+        $this->name = $name;
+        $this->lines = $this->fetchLines($pdo);
+    }
+
+    private function fetchLines(PDO $pdo) {
+        $sql = "SELECT * FROM `line` WHERE `text_section_id` = :text_section_id";
+        $statement = $pdo->prepare($sql);
+        // Bind :tablet_id to $this->id
+        $statement->execute([':text_section_id' => $this->id]);
+        // Get results
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $output = array();
+        foreach ($result as $row) {
+            // Append the new line to $output
+            $output[] = $row['text'];
+        }
+        return $output;
     }
 
     public function getID() {
         return $this->id;
     }
 
-    public function addLine($line) {
-        array_push($this->lines, $line);
-    }
-
-    public function insertmarks($line){
-    	global $termlist;
-	$pieces = explode(" ", htmlspecialchars($line));
-	for($x=0; $x< sizeof($pieces); $x++){
-		  if(in_array($pieces[$x], $termlist)){
-			$pieces[$x] = "<mark>".$pieces[$x]."</mark>";
-		  }
-   	}
-	return implode(" ", $pieces);
-    }
-
-    public function display() {
-    	   
-	
-        echo "<div class=\"panel panel-default\">\n" .
-             "<div class = \"panel-heading\">" . $this->name . "</div>\n" .
-             "<div class = \"panel-body\">\n";
-        echo "<ol>\n";
-        foreach ($this->lines as $line) {
-	    $line = $this->insertmarks($line);	         
-            echo "<li>", $line, "</li>";
+    public function insertMarks($line, $termlist, $names) {
+        // This can be propgate up into Tablet, and then pass $patterns
+        // and $replaces instead of $termslist and $names down through
+        // the display() functions
+        $patterns = array();
+        $replaces = array();
+        foreach ($termlist as $term) {
+            $patterns[] = "/" . preg_quote($term) . "/i";
+            $replaces[] = "<mark>$term</mark>";
         }
-        echo "</ol>";
-        echo "</div></div>";
+        foreach ($names as $name) {
+            $patterns[] = "/" . preg_quote($name) . "/i";
+            $replaces[] = "<b>$name</b>";
+        }
+
+        return preg_replace($patterns, $replaces, $line);
+    }
+
+    public function display($termlist, $names) {
+        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading"><?php echo $this->name; ?></div>
+            <div class="panel-body">
+                <ol>
+                    <?php
+                    foreach ($this->lines as $line) {
+                        echo "<li>", $this->insertMarks($line, $termlist, $names), "</li>\n";
+                    }
+                    ?>
+                </ol>
+            </div>
+        </div>
+        <?php
     }
 
     public function jsonSerialize() {
         return [
-                   'id'    => $this->id,
-                   'name'  => $this->name,
-                   'lines' => $this->lines
-               ];
+            'id' => $this->id,
+            'name' => $this->name,
+            'lines' => $this->lines
+        ];
     }
 
 }
-
 ?>
