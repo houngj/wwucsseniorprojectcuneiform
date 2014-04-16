@@ -1,5 +1,6 @@
 <?php
-include_once('user.php');
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/user.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/tablet.php';
 
 class Archive {
 
@@ -11,7 +12,9 @@ class Archive {
         $sql = "INSERT INTO `archive` (`archive_id`, `user_id`, `name`) VALUES (NULL, :user_id, :name)";
         $statement = $pdo->prepare($sql);
         if (!$statement->execute([':user_id' => USER::getUserId(), ':name' => $name])) {
-            die($statement->errorInfo());
+            var_dump($pdo->errorInfo());
+            var_dump($statement->errorInfo());
+            die("error");
         }
         return new Archive($pdo->lastInsertId(), $pdo);
     }
@@ -31,7 +34,7 @@ class Archive {
         return $this->id;
     }
 
-    public function  getName() {
+    public function getName() {
         return $this->name;
     }
 
@@ -44,7 +47,9 @@ class Archive {
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         $this->name = $row['name'];
         // While we have the data, verify the logged in user is the owner of the archive
-        assert($row['user_id'] == User::getUserId(), "Archive doesn't belong to the logged in user");
+        if ($row['user_id'] != User::getUserId()) {
+            throw new Exception("Archive doesn't belong to logged in user");
+        }
     }
 
     private function fetchArchiveTablets(PDO $pdo) {
@@ -56,7 +61,7 @@ class Archive {
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         $output = array();
         foreach ($result as $row) {
-            $output[] = $row['name'];
+            $output[] = ['tablet_id' => $row['tablet_id'], 'name' => $row['name']];
         }
         return $output;
     }
@@ -73,16 +78,24 @@ class Archive {
     public function display() {
         $tablets_count = count($this->tablets);
         ?>
-        <li><span class="glyphicon glyphicon-minus-sign list-minimizer"></span> <?php echo "$this->name ($tablets_count)"; ?>
+        <li><span class="glyphicon glyphicon-minus-sign list-minimizer"></span>
+            <a href="show_archive.php?archive_id=<?php echo $this->id; ?>"> <?php echo "$this->name ($tablets_count)"; ?></a>
             <ul>
                 <?php
                 foreach ($this->tablets as $tablet) {
-                    echo "<li>$tablet</li>\n";
+                    echo "<li>", $tablet['name'], "</li>\n";
                 }
                 ?>
             </ul>
         </li>
         <?php
+    }
+
+    public function displayFullTablets($pdo) {
+        foreach ($this->tablets as $tablet) {
+            $tablet = new Tablet($tablet['tablet_id'], $pdo);
+            $tablet->display(array());
+        }
     }
 
 }

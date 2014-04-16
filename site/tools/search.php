@@ -1,6 +1,6 @@
 <?php
 
-include_once 'tablet.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/tablet.php';
 
 class Search {
 

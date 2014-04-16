@@ -1,7 +1,7 @@
 <?php
 
-include_once '../connections/connection.php';
-include_once '../tools/functions.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/connections/connection.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/functions.php';
 $start_time = microtime(true);
 if (!isset($_GET['search'])) {
     http_response_code(400);

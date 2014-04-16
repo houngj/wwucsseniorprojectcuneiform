@@ -2,9 +2,22 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include_once 'connections/connection.php';
-include_once 'tools/search.php';
-include_once 'tools/user.php';
+// <rant>
+// When PHP `include`s or `require`s a file, it searches in the the directories 
+// in the php.ini variable `include_path`, then it searches paths relative to
+// the FILE IT'S EXECUTING. This seems like a fine and dandy choice, until you
+// have files in subdirecories that are including other files, then all the
+// paths must be relative to all the possible files being executed.  Which isn't
+// posible with our ./ and ./REST dirs.  So we have to resort to absolute paths.
+// Which means site (the connections and tools, at least,) must be placed in the
+// document root of the server, e.g. /var/www/tools, not /var/www/cunei/tools.
+// This is bad for portablity, but it's the only idea i have.
+// </rant>
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/connections/connection.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/user.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/search.php';
 
 $pdo = getConnection();
 
@@ -56,9 +69,9 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="">WWU Cuneiform</a>
+                    <a class="navbar-brand" href="index.php">WWU Cuneiform</a>
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
+                        <li class="active"><a href="index.php">Home</a></li>
                     </ul>
                 </div>
                 <div class="navbar-collapse collapse">

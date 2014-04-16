@@ -1,5 +1,5 @@
 <?php
-include_once 'archive.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
 
 class Tablet implements JsonSerializable {
 
@@ -130,7 +130,6 @@ class Tablet implements JsonSerializable {
             'objects' => $this->objects
         ];
     }
-
 }
 
 class TabletObject implements JsonSerializable {
@@ -272,4 +271,5 @@ class TextSection implements JsonSerializable {
     }
 
 }
+
 ?>

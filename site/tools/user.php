@@ -4,7 +4,7 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-include_once 'archive.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
 
 class User
 {

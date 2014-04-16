@@ -2,9 +2,10 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-include_once '../tools/archive.php';
-include_once '../tools/user.php';
-include_once '../connections/connection.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/connections/connection.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/user.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
 
 if (!isset($_GET['action'])) {
     // TODO, add more meaningful output
@@ -30,3 +31,5 @@ if ($_GET['action'] === 'add_tablet' && isset($_GET['archive_id']) && isset($_GE
     exit;
 }
 
+echo json_encode("Invalid action specified");
+http_response_code(400);
