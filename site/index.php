@@ -1,16 +1,19 @@
 <?php
-include 'connections/connection.php';
-include 'tools/search.php';
-include 'tools/user.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+include_once 'connections/connection.php';
+include_once 'tools/search.php';
+include_once 'tools/user.php';
 
 $pdo = getConnection();
 
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    // If the user has submitted the login form, try to log in.
+// If the user has submitted the login form, try to log in.
     User::login($pdo, $_POST['username'], $_POST['password'])
             or die("Invalid username or password");
 } else if (isset($_GET['logout'])) {
-    // Log the user out.
+// Log the user out.
     User::logout();
 }
 
@@ -55,7 +58,7 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                 <div class="navbar-header">
                     <a class="navbar-brand" href="">WWU Cuneiform</a>
                     <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Home</a></li>
+                        <li class="active"><a href="#">Home</a></li>
                     </ul>
                 </div>
                 <div class="navbar-collapse collapse">
@@ -85,10 +88,14 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                     <!-- Begin sidebar -->
                     <h4>My Virtual Archives</h4>
                     <?php
-                    User::printArchives($pdo);
+                    if (User::isLoggedIn()) {
+                        User::printArchives($pdo);
+                    } else {
+                        echo "<p>Log in to use Virtual Archives</p>\n";
+                    }
                     ?>
                     <!--- End sidebar --->
-                </div> 
+                </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                     <!-- Begin main content div -->
                     <h1>Tablet Search</h1>

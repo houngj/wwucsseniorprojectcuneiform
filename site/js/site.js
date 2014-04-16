@@ -11,6 +11,24 @@ $('.list-minimizer').click(function() {
     }
 });
 
+function addTabletToNewArchive(tabletID) {
+    var archiveName = prompt("Name of new archive:", "New Virtual Archive");
+    if (archiveName !== null) {
+        var d = 'action=new_archive&title=' + encodeURIComponent(archiveName);
+        $.getJSON('REST/archive.php', d, function(data) {
+            addTabletToArchive(data, tabletID);
+        });
+    }
+}
+
+function addTabletToArchive(archiveID, tabletID) {
+    var d = 'action=add_tablet&archive_id=' + encodeURIComponent(archiveID) + '&tablet_id=' + encodeURIComponent(tabletID);
+    $.getJSON('REST/archive.php',d, function(data) {
+        location.reload();
+    });
+}
+
+
 function graphDates(search) {
     $.getJSON("./REST/dates.php", "search=" + search, function(data) {
         var dataArray = [['Abbreviation', 'Count']];

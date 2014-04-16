@@ -1,6 +1,6 @@
 <?php
 
-include 'tablet.php';
+include_once 'tablet.php';
 
 class Search {
 
@@ -19,15 +19,14 @@ class Search {
         $this->buildQuery();
         $this->results = $this->fetchResults();
     }
-    
+
     function getSearch() {
         return $this->search;
     }
-    
+
     function getResultsCount() {
         return count($this->results);
     }
-        
 
     private function buildQuery() {
         // MySQL's full text indexing uses + and - to denote whether terms

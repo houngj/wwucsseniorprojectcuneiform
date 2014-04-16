@@ -1,6 +1,6 @@
 <?php
-include("../connections/connection.php");
-include("../tools/tablet.php");
+include_once '../connections/connection.php';
+include_once '../tools/tablet.php';
 $pdo = getConnection();
 
 if (isset($_GET['tablet_id']) && ctype_digit($_GET['tablet_id']) && $_GET['tablet_id'] > 0) {

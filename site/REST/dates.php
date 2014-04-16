@@ -1,7 +1,7 @@
 <?php
 
-include("../connections/connection.php");
-include("../tools/functions.php");
+include_once '../connections/connection.php';
+include_once '../tools/functions.php';
 $start_time = microtime(true);
 if (!isset($_GET['search'])) {
     http_response_code(400);

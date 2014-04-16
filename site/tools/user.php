@@ -4,11 +4,12 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-include('archive.php');
+include_once 'archive.php';
 
 class User
 {
     private static $errorMessage;
+    private static $archives = null;
 
     public static function isLoggedIn()
     {
@@ -34,7 +35,7 @@ class User
 
         return 0;
     }
-    
+
     public static function getErrorMessage() {
         return User::$errorMessage;
     }
@@ -59,7 +60,7 @@ class User
     {
         $sql =
             'SELECT U.user_id, U.name, U.hash
-             FROM   user U 
+             FROM   user U
              WHERE  U.name = :name';
 
         $stmt = $pdo->prepare($sql);
@@ -91,40 +92,46 @@ class User
                 );
                 // No error.
                 User::$errorMessage = null;
-            } 
-            else 
+            }
+            else
             {
-                // Invalid password.
+                // Invalid password. Maybe throwing exceptions is better?
                 User::$errorMessage = "Invalid username or password";
             }
         }
 
         return $success;
     }
-    
-    private static function getArchives(PDO $pdo) {
+
+    private static function fetchArchives(PDO $pdo) {
+        assert(User::isLoggedIn(), "User isn't logged in");
         $sql = "SELECT * FROM `archive` WHERE `user_id`= :user_id";
         $statement = $pdo->prepare($sql);
         // Bind user_id
         $statement->execute([':user_id' => User::getUserId()]);
         // Get results
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        $output = array();
+        User::$archives = array();
         foreach($result as $row) {
-            $output[] = new Archive($row['archive_id'], $pdo);
+            User::$archives[] = new Archive($row['archive_id'], $pdo);
         }
-        return $output;
+    }
+
+    static function getArchives() {
+        assert(User::isLoggedIn(), "User isn't logged in");
+        assert(User::$archives != null, "User::\$archives is null");
+        return User::$archives;
     }
 
     public static function printArchives(PDO $pdo) {
-        $archives = User::getArchives($pdo);
+        assert(User::isLoggedIn(), "User isn't logged in");
+        User::fetchArchives($pdo); // Sets User::$archives
         echo "<ul style=\"list-style-type:none\">\n";
-        foreach ($archives as $archive){
+        foreach (User::$archives as $archive){
             $archive->display();
         }
         echo "</ul>";
     }
-
 }
 
 ?>

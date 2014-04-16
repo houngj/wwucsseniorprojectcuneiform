@@ -1,4 +1,5 @@
 <?php
+include_once 'archive.php';
 
 class Tablet implements JsonSerializable {
 
@@ -57,19 +58,25 @@ class Tablet implements JsonSerializable {
             <div class="panel-heading">
                 <?php echo $this->name; ?>
                 <div class="btn-group">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            Add To <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">New Virtual Archive</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Virtual Archive 1</a></li>
-                            <li><a href="#">Virtual Archive 2</a></li>
-                            <li><a href="#">Virtual Archive 3</a></li>
-                            <li><a href="#">Empty Virtual Archive</a></li>
-                        </ul>
-                    </div>
+                    <?php if (User::isLoggedIn()) { ?>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                Add To <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a onclick="addTabletToNewArchive(<?php echo $this->id; ?>)">New Virtual Archive</a></li>
+                                <li class="divider"></li>
+                                <?php
+                                // Display links for adding to the user's archives
+                                $archives = User::getArchives();
+                                foreach ($archives as $a) {
+                                    $archiveID = $a->getID();
+                                    echo "<li><a onclick=\"addTabletToArchive($archiveID, $this->id)\">", $a->getName(), "</a></li>\n";
+                                }
+                                ?>
+                            </ul>
+                        </div>
+                    <?php } ?>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                             View At <span class="caret"></span>
