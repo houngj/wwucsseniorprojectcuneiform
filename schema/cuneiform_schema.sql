@@ -12,62 +12,43 @@ GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost'  IDENTIFIED BY 'hungry!';
 
 /* Create tables. */
 
-CREATE TABLE `tablet`
+CREATE TABLE `tablet_group`
 (
-	`tablet_id`
+	`tablet_group_id`
 		INT
 		PRIMARY KEY
 		NOT NULL AUTO_INCREMENT,
-	`name`
+	`tablet_group_name`
 		VARCHAR(100)
 		NOT NULL
 		DEFAULT '',
-	`lang`
+	`tablet_group_lang`
 		VARCHAR(16)
 		NOT NULL
 		DEFAULT 'sux',		-- Default: sumerian (sux)
-	FULLTEXT KEY (`name`)
+	FULLTEXT KEY (`tablet_group_name`)
 );
 
-CREATE TABLE `tablet_object`
+CREATE TABLE `container`
 (
-	`tablet_object_id`
+	`container_id`
 		INT
 		PRIMARY KEY
-		NOT NULL
-		AUTO_INCREMENT,
-	`tablet_id`
+		NOT NULL AUTO_INCREMENT,
+	`tablet_group_id`
+		INT
+		NOT NULL,
+	`parent_container_id`
 		INT,
-	`obj_name`
+	`container_name`
 		VARCHAR(100)
 		NOT NULL,
 
-	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`tablet_id`)
+	FOREIGN KEY (`tablet_group_id`)
+		REFERENCES `tablet_group` (`tablet_group_id`),
+	FOREIGN KEY (`parent_container_id`)
+		REFERENCES `container` (`container_id`)
 );
-
-CREATE TABLE `text_section_type`
-(
-	`text_section_type_id`
-		INT
-		PRIMARY KEY
-		NOT NULL,
-	`name`
-		VARCHAR(32)
-		NOT NULL
-);
-
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 1, 'Bottom');   -- @bottom
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 2, 'Bulla');    -- @bulla
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 3, 'Edge');     -- @edge
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 4, 'Envelope'); -- @envelope
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 5, 'Left');     -- @left
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 6, 'Object');   -- @object
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 7, 'Obverse');  -- @obverse
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 8, 'Reverse');  -- @reverse
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES ( 9, 'Seal');     -- @seal
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES (10, 'Tablet');   -- @tablet
-INSERT INTO `text_section_type` (`text_section_type_id`, `name`) VALUES (11, 'Top');      -- @top
 
 CREATE TABLE `text_section`
 (
@@ -76,24 +57,12 @@ CREATE TABLE `text_section`
 		PRIMARY KEY
 		NOT NULL
 		AUTO_INCREMENT,
-	`tablet_object_id`
+	`container_id`
 		INT
 		NOT NULL,
-
-/*
-	There's a lot of garbage in the @ comments that indicate the source
-	of the text:
-		cat ur3_20140114_public.atf | grep ^@ | sort | uniq
-	We shouldn't support them all, so for now we'll just allow `textsectiontype_id`
-	to be NULL if it's from a source we don't care to implement yet.
-*/
-	`text_section_name`
-		VARCHAR(100)
-		NOT NULL,
-	`text_section_type_id`
+	`tablet_group_id`
 		INT
-		NULL,
-
+		NOT NULL,
 /*
 	There are some pretty long tablet texts in the Ur III source file, and in MySQL
 	the longest VARCHAR field is something like 21805 bytes.  That's not enough
@@ -101,17 +70,15 @@ CREATE TABLE `text_section`
 	aren't memory resident and queries on it will hit the physical disk and slow
 	us down significantly.
 */
-
-	`section_text`
+	`text_section_text`
 		TEXT
 		NOT NULL
 		DEFAULT '',
-
-	FOREIGN KEY (`tablet_object_id`)
-		REFERENCES `tablet_object` (`tablet_object_id`),
-	FOREIGN KEY (`text_section_type_id`)
-		REFERENCES `text_section_type` (`text_section_type_id`),
-	FULLTEXT KEY (`section_text`)
+	FOREIGN KEY (`tablet_group_id`)
+		REFERENCES `tablet_group` (`tablet_group_id`),
+	FOREIGN KEY (`container_id`)
+		REFERENCES `container` (`container_id`),
+	FULLTEXT KEY (`text_section_text`)
 );
 
 CREATE TABLE `line`
@@ -124,7 +91,7 @@ CREATE TABLE `line`
 	`text_section_id`
 		INT
 		NOT NULL,
-	`text`
+	`line_text`
 		NVARCHAR(270),			-- Longest line in ur3 source file is 270 chars.
 	`translation`
 		NVARCHAR(256)
@@ -137,7 +104,7 @@ CREATE TABLE `line`
 
 	FOREIGN KEY (`text_section_id`)
 		REFERENCES `text_section` (`text_section_id`),
-	FULLTEXT KEY (`text`)
+	FULLTEXT KEY (`line_text`)
 );
 
 CREATE TABLE `canonical_month`
@@ -161,100 +128,54 @@ CREATE TABLE `canonical_month`
 		DEFAULT NULL
 );
 
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('GAN2-masz', 1, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('bara2-za3-gar', 1, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sze-sag11-ku5', 1, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sze-sag-ku5', 1, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('gu4-ra2-bi2-mu2-mu2', 2, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('gu4-si-su', 2, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sig4-geszi3-szub-ba-gar', 2, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('masz-da3-gu7', 2, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}li9-si4', 3, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sig4-ga', 3, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sze-kar-ra-gal2-la', 3, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ses-da-gu7', 3, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('szesz-da-gu7', 3, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('nesag2', 4, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('u5-bi2-gu7', 4, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('munu4-gu7', 5, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('NE-NE-gar', 5, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('RI-dal', 5, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ki-sikil-{d}nin-a-zu', 5, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}dumu-zi', 6, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('kin-{d}inanna', 6, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}nin-a-zu', 6, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('du6-ku3', 7, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
-	VALUES ('ezem-{d}amar-{d}suen', 7, 'Umma', 'from AS7 to SzS2');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('min-esz3', 7, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('a2-ki-ti', 7, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}ba-ba6', 8, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('apin-du8-a', 8, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('e2-iti6', 8, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-{d}szul-gi', 8, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('mu-szu-du7', 9, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('GAN-GAN-e3', 9, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('szu-esz-sza', 9, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('amar-a-a-si', 10, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('AB-e3', 10, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-mah', 10, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ziz2-a', 11, 'Nippur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('pa4-u2-e', 11, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-an-na', 11, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
-	VALUES ('diri ezem-me-ki-gal2', 12, 'Drehem', 'SzS3');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('sze-il2-la', 12, 'Girsu');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('{d}dumu-zi', 12, 'Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('ezem-me-ki-gal2', 12, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`)
-	VALUES ('diri', 13, 'Ur');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
-	VALUES ('ezem-{d}szu-{d}suen', NULL, 'Drehem', 'month 8 in SzS3, month 9 from SzS3 to IS8');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
-	VALUES ('szu-numun', NULL, 'Girsu, Nippur, Umma', 'month 4 in Girsu and Nippur, month 6 in Umma');
-INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`)
-	VALUES ('UR', NULL, 'Girst, Umma', 'month 7 in Girsu, month 10 in Umma before Sz30');
+INSERT INTO `canonical_month` (`text`, `month_number`, `polity`, `comment`) VALUES
+	('GAN2-masz',               1, 'Girsu',  NULL),
+	('bara2-za3-gar',           1, 'Ur',     NULL),
+	('sze-sag11-ku5',           1, 'Ur',     NULL),
+	('sze-sag-ku5',             1, 'Ur',     NULL),
+	('gu4-ra2-bi2-mu2-mu2',     2, 'Girsu',  NULL),
+    ('gu4-si-su',               2, 'Nippur', NULL),
+	('sig4-geszi3-szub-ba-gar', 2, 'Umma',   NULL),
+	('masz-da3-gu7',            2, 'Ur',     NULL),
+	('ezem-{d}li9-si4',         3, 'Girsu',  NULL),
+	('sig4-ga',                 3, 'Nippur', NULL),
+	('sze-kar-ra-gal2-la',      3, 'Umma',   NULL),
+	('ses-da-gu7',              3, 'Ur',     NULL),
+	('szesz-da-gu7',            3, 'Ur',     NULL),
+	('nesag2',                  4, 'Umma',   NULL),
+	('u5-bi2-gu7',              4, 'Umma',   NULL),
+	('munu4-gu7',               5, 'Girsu',  NULL),
+	('NE-NE-gar',               5, 'Nippur', NULL),
+	('RI-dal',                  5, 'Umma',   NULL),
+	('ki-sikil-{d}nin-a-zu',    5, 'Ur',     NULL),
+	('ezem-{d}dumu-zi',         6, 'Girsu',  NULL),
+	('kin-{d}inanna',           6, 'Nippur', NULL),
+	('ezem-{d}nin-a-zu',        6, 'Ur',     NULL),
+	('du6-ku3',                 7, 'Nippur', NULL),
+	('ezem-{d}amar-{d}suen',    7, 'Umma',   'from AS7 to SzS2'),
+	('min-esz3',                7, 'Umma',   NULL),
+	('a2-ki-ti',                7, 'Ur',     NULL),
+	('ezem-{d}ba-ba6',          8, 'Girsu',  NULL),
+	('apin-du8-a',              8, 'Nippur', NULL),
+	('e2-iti6',                 8, 'Umma',   NULL),
+	('ezem-{d}szul-gi',         8, 'Ur',     NULL),
+	('mu-szu-du7',              9, 'Girsu',  NULL),
+	('GAN-GAN-e3',              9, 'Nippur', NULL),
+	('szu-esz-sza',             9, 'Ur',     NULL),
+	('amar-a-a-si',            10, 'Girsu',  NULL),
+	('AB-e3',                  10, 'Nippur', NULL),
+	('ezem-mah',               10, 'Ur',     NULL),
+	('ziz2-a',                 11, 'Nippur', NULL),
+	('pa4-u2-e',               11, 'Umma',   NULL),
+	('ezem-an-na',             11, 'Ur',     NULL),
+	('diri ezem-me-ki-gal2',   12, 'Drehem', 'SzS3'),
+	('sze-il2-la',             12, 'Girsu',  NULL),
+	('{d}dumu-zi',             12, 'Umma',   NULL),
+	('ezem-me-ki-gal2',        12, 'Ur',     NULL),
+	('diri',                   13, 'Ur',     NULL),
+	('ezem-{d}szu-{d}suen',  NULL, 'Drehem', 'month 8 in SzS3, month 9 from SzS3 to IS8'),
+	('szu-numun',            NULL, 'Girsu, Nippur, Umma', 'month 4 in Girsu and Nippur, month 6 in Umma'),
+	('UR',                   NULL, 'Girst, Umma', 'month 7 in Girsu, month 10 in Umma before Sz30');
 
 CREATE TABLE `canonical_year`
 (
@@ -513,7 +434,8 @@ CREATE TABLE `name`
 		AUTO_INCREMENT,
 	`name_text`
 		VARCHAR(100)
-		NOT NULL
+		NOT NULL,
+	UNIQUE (`name_text`)
 );
 
 CREATE TABLE `name_reference`
@@ -526,11 +448,11 @@ CREATE TABLE `name_reference`
 	`name_id`
 		INT
 		NOT NULL,
-	`tablet_id`
+	`text_section_id`
 		INT
 		NOT NULL,
-	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`tablet_id`),
+	FOREIGN KEY (`text_section_id`)
+		REFERENCES `text_section` (`text_section_id`),
 	FOREIGN KEY (`name_id`)
 		REFERENCES `name` (`name_id`)
 );
@@ -576,7 +498,7 @@ CREATE TABLE `archive`
 	`user_id`
 		INT
 		NOT NULL,
-	`name`
+	`archive_name`
 		NVARCHAR(256)
 		NOT NULL
 		DEFAULT 'New Virtual Archive',
@@ -595,12 +517,12 @@ CREATE TABLE `archive_tablet`
 	`archive_id`
 		INT
 		NOT NULL,
-	`tablet_id`
+	`tablet_group_id`
 		INT
 		NOT NULL,
 
 	FOREIGN KEY (`archive_id`)
 		REFERENCES `archive` (`archive_id`),
-	FOREIGN KEY (`tablet_id`)
-		REFERENCES `tablet` (`tablet_id`)
+	FOREIGN KEY (`tablet_group_id`)
+		REFERENCES `tablet_group` (`tablet_group_id`)
 );

@@ -22,8 +22,8 @@ function addTabletToNewArchive(tabletID) {
 }
 
 function addTabletToArchive(archiveID, tabletID) {
-    var d = 'action=add_tablet&archive_id=' + encodeURIComponent(archiveID) + '&tablet_id=' + encodeURIComponent(tabletID);
-    $.getJSON('REST/archive.php',d, function(data) {
+    var d = 'action=add_tablet&archive_id=' + encodeURIComponent(archiveID) + '&tablet_group_id=' + encodeURIComponent(tabletID);
+    $.getJSON('REST/archive.php', d, function(data) {
         location.reload();
     });
 }
@@ -41,7 +41,8 @@ function graphDates(search) {
         var options = {
             'title': 'Date Distribution',
             'width': 1000,
-            'height': 700
+            'height': 700,
+            'hAxis': {slantedText: true, slantedTextAngle: 80}
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('date-distribution'));

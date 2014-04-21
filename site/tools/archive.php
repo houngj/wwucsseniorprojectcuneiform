@@ -9,9 +9,9 @@ class Archive {
     private $tablets;
 
     static function addArchive($name, PDO $pdo) {
-        $sql = "INSERT INTO `archive` (`archive_id`, `user_id`, `name`) VALUES (NULL, :user_id, :name)";
+        $sql = "INSERT INTO `archive` (`archive_id`, `user_id`, `archive_name`) VALUES (NULL, :user_id, :archive_name)";
         $statement = $pdo->prepare($sql);
-        if (!$statement->execute([':user_id' => USER::getUserId(), ':name' => $name])) {
+        if (!$statement->execute([':user_id' => USER::getUserId(), ':archive_name' => $name])) {
             var_dump($pdo->errorInfo());
             var_dump($statement->errorInfo());
             die("error");
@@ -45,7 +45,7 @@ class Archive {
         $statement->execute([':archive_id' => $this->id]);
         // Get data, must be only one row
         $row = $statement->fetch(PDO::FETCH_ASSOC);
-        $this->name = $row['name'];
+        $this->name = $row['archive_name'];
         // While we have the data, verify the logged in user is the owner of the archive
         if ($row['user_id'] != User::getUserId()) {
             throw new Exception("Archive doesn't belong to logged in user");
@@ -53,7 +53,7 @@ class Archive {
     }
 
     private function fetchArchiveTablets(PDO $pdo) {
-        $sql = "SELECT * from `archive_tablet` NATURAL JOIN `tablet` WHERE `archive_id` = :archive_id";
+        $sql = "SELECT * from `archive_tablet` NATURAL JOIN `tablet_group` WHERE `archive_id` = :archive_id";
         $statement = $pdo->prepare($sql);
         // Bind archive_id to $this->id
         $statement->execute([':archive_id' => $this->id]);
@@ -61,15 +61,15 @@ class Archive {
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         $output = array();
         foreach ($result as $row) {
-            $output[] = ['tablet_id' => $row['tablet_id'], 'name' => $row['name']];
+            $output[] = ['tablet_id' => $row['tablet_group_id'], 'tablet_group_name' => $row['tablet_group_name']];
         }
         return $output;
     }
 
-    public function addTablet($tabletID, PDO $pdo) {
-        $sql = "INSERT INTO `archive_tablet` (`archive_tablet_id`, `archive_id`, `tablet_id`) VALUES (NULL, :archive_id, :tablet_id)";
+    public function addTablet($tabletGroupID, PDO $pdo) {
+        $sql = "INSERT INTO `archive_tablet` (`archive_tablet_id`, `archive_id`, `tablet_group_id`) VALUES (NULL, :archive_id, :tablet_group_id)";
         $statement = $pdo->prepare($sql);
-        if (!$statement->execute([':archive_id' => $this->id, ':tablet_id' => $tabletID])) {
+        if (!$statement->execute([':archive_id' => $this->id, ':tablet_group_id' => $tabletGroupID])) {
             die($statement->errorInfo());
         }
         return true;
@@ -83,7 +83,7 @@ class Archive {
             <ul>
                 <?php
                 foreach ($this->tablets as $tablet) {
-                    echo "<li>", $tablet['name'], "</li>\n";
+                    echo "<li>", $tablet['tablet_group_name'], "</li>\n";
                 }
                 ?>
             </ul>
@@ -93,7 +93,7 @@ class Archive {
 
     public function displayFullTablets($pdo) {
         foreach ($this->tablets as $tablet) {
-            $tablet = new Tablet($tablet['tablet_id'], $pdo);
+            $tablet = new TabletGroup($tablet['tablet_id'], $pdo);
             $tablet->display(array());
         }
     }

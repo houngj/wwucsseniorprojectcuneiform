@@ -104,6 +104,7 @@ class User
     }
 
     private static function fetchArchives(PDO $pdo) {
+        User::$archives = array();
         assert(User::isLoggedIn(), "User isn't logged in");
         $sql = "SELECT * FROM `archive` WHERE `user_id`= :user_id";
         $statement = $pdo->prepare($sql);
@@ -111,15 +112,17 @@ class User
         $statement->execute([':user_id' => User::getUserId()]);
         // Get results
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        User::$archives = array();
         foreach($result as $row) {
             User::$archives[] = new Archive($row['archive_id'], $pdo);
         }
     }
 
     static function getArchives() {
-        assert(User::isLoggedIn(), "User isn't logged in");
-        assert(User::$archives != null, "User::\$archives is null");
+        if (User::isLoggedIn() === false) {
+            throw new Exception('User isn\'t logged in');
+        } else if (User::$archives === null) {
+            throw new Exception('User::\$archives is null');
+        }
         return User::$archives;
     }
 

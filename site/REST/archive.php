@@ -22,10 +22,10 @@ if ($_GET['action'] === 'new_archive' && isset($_GET['title'])) {
     exit;
 }
 
-if ($_GET['action'] === 'add_tablet' && isset($_GET['archive_id']) && isset($_GET['tablet_id'])) {
+if ($_GET['action'] === 'add_tablet' && isset($_GET['archive_id']) && isset($_GET['tablet_group_id'])) {
     $pdo = getConnection();
     $archive = new Archive($_GET['archive_id'], $pdo);
-    $archive->addTablet($_GET['tablet_id'], $pdo);
+    $archive->addTablet($_GET['tablet_group_id'], $pdo);
     // TODO, add more meaningful output
     echo json_encode(true);
     exit;

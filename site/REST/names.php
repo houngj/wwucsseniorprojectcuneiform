@@ -1,9 +1,11 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/connections/connection.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/functions.php';
+
 if (!isset($_GET['search'])) {
+    echo json_encode("GET['search'] is not set");
     http_response_code(400);
-    die("search isn't set");
+    exit;
 }
 $start_time = microtime(true);
 $search = makeQuery($_GET['search']);
@@ -21,19 +23,21 @@ if ($cache !== FALSE && ($return_value = $cache->get($cache_key)) !== FALSE) {
 
 $pdo = getConnection();
 
-$subQuery =     "SELECT t.tablet_id\n" .
-                "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
-                "WHERE MATCH(ts.section_text) AGAINST('$search' IN BOOLEAN MODE)\n" .
-                "GROUP BY t.tablet_id";
+$subQuery = 'SELECT tg.tablet_group_id
+             FROM `tablet_group` tg NATURAL JOIN `text_section` ts
+             WHERE MATCH(ts.text_section_text) AGAINST(:search IN BOOLEAN MODE)
+             GROUP BY tg.tablet_group_id';
 
-$query =     "SELECT n.name_text, COUNT(*) AS count\n" .
-             "FROM `tablet` t NATURAL JOIN `name_reference` nr NATURAL JOIN `name` n\n" .
-             "WHERE t.tablet_id IN (\n$subQuery\n)\n" .
-             "GROUP BY n.name_id\n" .
-             "ORDER BY count DESC";
+$query =    'SELECT n.name_text, COUNT(*) AS count
+             FROM `text_section` ts NATURAL JOIN `name_reference` nr NATURAL JOIN `name` n
+             WHERE ts.tablet_group_id IN
+             (' . $subQuery . ')
+             GROUP BY n.name_id
+             ORDER BY count DESC';
 
-$result = $pdo->query($query);
-$return_value = json_encode($result->fetchAll(PDO::FETCH_ASSOC));
+$statement = $pdo->prepare($query);
+$statement->execute([':search' => $search]);
+$return_value = json_encode($statement->fetchAll(PDO::FETCH_ASSOC));
 echo $return_value;
 if ($cache !== FALSE) {
     $cache->set($cache_key, $return_value);

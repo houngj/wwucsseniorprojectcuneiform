@@ -3,48 +3,51 @@ package cuneiform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.sql.*;
+
+import cuneiform.tablet.Container;
+import cuneiform.tablet.TabletFactory;
+import cuneiform.tablet.TabletGroup;
+import cuneiform.tablet.TextSection;
 
 class ParallelExtractor
         implements Runnable {
-    private final NameExtractor nameExtractor;
-    private final TabletFactory factory;
-    private final List<Tablet>  tablets   = new ArrayList<>();
-    private Thread[]            threads;
-    private DateExtractor       dateExtractor;
-    private int                 years     = 0;
-    private int                 months    = 0;
-    private double              yearConf  = 0;
-    private double              monthConf = 0;
+    private final TabletFactory     factory;
+    private final DateExtractor     dateExtractor;
+    private final NameExtractor     nameExtractor;
+    private final List<TabletGroup> tablets   = new ArrayList<>();
+    private Thread[]                threads;
+    private int                     years     = 0;
+    private int                     months    = 0;
+    private int                     tabletsWithMonths = 0;
+    private int                     tabletsWithYears = 0;
+    private double                  yearConf  = 0;
+    private double                  monthConf = 0;
+    private final String            dbHost;
+    private final String            dbUser;
+    private final String            dbPass;
 
-    private static final String DB_HOST = "jdbc:mysql://192.168.1.102/cuneiform";
-    private static final String DB_USER = "dingo";
-    private static final String DB_PASS = "hungry!";
 
-    public ParallelExtractor(BufferedReader reader) {
-        this.factory = new TabletFactory(reader);
+    public ParallelExtractor(BufferedReader reader, String dbHost, String dbUser, String dbPass) {
+        this.factory       = new TabletFactory(reader);
+        this.dbHost        = dbHost;
+        this.dbUser        = dbUser;
+        this.dbPass        = dbPass;
+        // Initialize these here so we have one, not one per thread
         this.nameExtractor = new NameExtractor();
-        clearDatabase();
+        this.dateExtractor = createDateExtractor();
     }
 
-    void clearDatabase() {
-        final String[] tables = new String[] {
-                "line", "month_reference", "year_reference",
-                "text_section", "tablet_object", "name_reference", "tablet"
-        };
-        try (Connection conn = getConnection();
-                Statement stmnt = conn.createStatement()) {
-            for (String table : tables) {
-                stmnt.executeUpdate(String.format("DELETE FROM `%s`;", table));
-                stmnt.executeUpdate(String.format("ALTER TABLE `%s` AUTO_INCREMENT = 1;", table));
-            }
+    private DateExtractor createDateExtractor() {
+        // DateExtractor needs a database connection to retrieve known dates.
+        try (Connection conn = getConnection()) {
+            return new DateExtractor(conn);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Cannot create DateExtractor", e);
         }
     }
 
@@ -57,40 +60,40 @@ class ParallelExtractor
     }
 
     public void join()
-            throws InterruptedException {
+            throws InterruptedException
+    {
         for (int i = 0; i < threads.length; ++i) {
             threads[i].join();
         }
     }
 
-    public void printStats(PrintStream output) {
-        output.format("months with data:         %3.3f%%  %d / %d%n", 100.0 * months / tablets.size(), months, tablets.size());
-        output.format("years with data:          %3.3f%%  %d / %d%n", 100.0 * years / tablets.size(), years, tablets.size());
-        output.format("average month confidence: %3.3f%%%n", monthConf / tablets.size());
-        output.format("average year confidence:  %3.3f%%%n", yearConf / tablets.size());
-        output.println();
+    public void printNames(PrintStream ps) {
+        nameExtractor.print(ps);
     }
 
-    public void printSorted(PrintStream output) {
-        Collections.sort(tablets);
-        for (Tablet t : tablets) {
-            t.printStats(output);
-        }
-    }
-
-    public void printUnmatched(PrintStream output) {
-        for(Tablet t : tablets) {
-            if(t.foundMonth == null && t.foundYear == null) {
-                t.print(output);
+    public void printUnmatched(PrintStream ps) {
+        for(TabletGroup tg : tablets) {
+            if (tg.hasYear() == false && tg.hasMonth() == false) {
+                tg.print(ps);
             }
         }
     }
 
-    public void printNames(PrintStream output) {
-        nameExtractor.print(output);
+    public void printStats(PrintStream output) {
+        output.format("months with data:         %3.3f%%  %d / %d%n", 100.0 * tabletsWithMonths / tablets.size(), tabletsWithMonths, tablets.size());
+        output.format("years with data:          %3.3f%%  %d / %d%n", 100.0 * tabletsWithYears / tablets.size(), tabletsWithYears, tablets.size());
+        output.format("average month confidence: %3.3f%%%n", monthConf / months);
+        output.format("average year confidence:  %3.3f%%%n", yearConf / years);
+        output.println();
     }
 
-    private Tablet getTablet() {
+    public void printSorted(PrintStream output) {
+        for (TabletGroup t : tablets) {
+            t.printStats(output);
+        }
+    }
+
+    private TabletGroup getTablet() {
         try {
             return factory.build();
         } catch (IOException e) {
@@ -99,48 +102,75 @@ class ParallelExtractor
     }
 
     public void run() {
-        Tablet t = null;
+        TabletGroup t = null;
 
         // Establish the database connection.
         // Although Connection objects should be thread-safe, let's give
         // each thread its own connection object.
 
         try (Connection conn = getConnection()) {
-            if (null != conn)
-            {
-                // We have a valid connection. Let's go !
-
-                this.dateExtractor = new DateExtractor(conn);
-
-                while ((t = getTablet()) != null) {
-                    dateExtractor.process(conn, t);
-                    nameExtractor.process(conn, t);
-                    System.err.println(tablets.size());
-
-                    synchronized (tablets) {
-                        tablets.add(t);
-
-                        if (t.foundMonth != null) {
-                            months++;
-                            monthConf += t.foundMonth.confidence.confidence;
-                        }
-                        if (t.foundYear != null) {
-                            years++;
-                            yearConf += t.foundYear.confidence.confidence;
-                        }
-                    }
-                }
+            if (conn == null) {
+                throw new IllegalStateException("Didn't receive database connection");
             }
-        } catch (SQLException e)
-        {
-            // Something dreadful happened SQL-wise.
+            // We have a valid connection. Let's go !
 
+            while ((t = getTablet()) != null) {
+                dateExtractor.process(conn, t);
+                nameExtractor.process(conn, t);
+                t.insert(conn);
+                System.err.println(tablets.size());
+                addTabletGroupStats(t);
+            }
+
+        } catch (SQLException e) {
+            // Something dreadful happened SQL-wise.
             System.out.println("Database access problem encountered: " + e.getMessage());
+            throw new IllegalStateException(e);
         }
     }
 
-    private static Connection getConnection() throws SQLException
-    {
-        return DriverManager.getConnection(DB_HOST, DB_USER, DB_PASS);
+    void addTabletGroupStats(TabletGroup input) {
+        synchronized (tablets) {
+            tablets.add(input);
+            if (input.hasMonth()) {
+                tabletsWithMonths++;
+            }
+            if (input.hasYear()) {
+                tabletsWithYears++;
+            }
+        }
+        for (Container container : input.containers) {
+            addTabletGroupStats(container);
+        }
     }
+
+    private void addTabletGroupStats(Container input) {
+        if (input.section != null) {
+            addTabletGroupStats(input.section);
+        } else {
+            for (Container container : input.containers) {
+                addTabletGroupStats(container);
+            }
+        }
+    }
+
+    private void addTabletGroupStats(TextSection section) {
+        synchronized (tablets) {
+            for (FoundDate month : section.months) {
+                months++;
+                monthConf += month.confidence.confidence;
+            }
+            for (FoundDate year : section.years) {
+                years++;
+                yearConf += year.confidence.confidence;
+            }
+        }
+    }
+
+    private synchronized Connection getConnection()
+            throws SQLException
+    {
+        return DriverManager.getConnection(dbHost, dbUser, dbPass);
+    }
+
 }

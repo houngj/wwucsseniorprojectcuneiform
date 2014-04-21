@@ -144,7 +144,6 @@ A-ba-di-ba-ni
 A-ba-di-DU.NI
 a-ba-DI-na
 a-ba-dingir-ga2-gin7
-A-ba-dingir-ga2-gin7
 A-ba-dingir-mu-gin7
 A-ba-di-ni
 A-ba-{d}Lama-gin7
@@ -452,7 +451,6 @@ Al-la-ba-an-zi
 Al-la-ba-zi
 Al-la-DI
 Al-la-di-mu
-Al-la-DI-mu
 Al-la-DI.NE
 Al-la-gi
 Al-la-gi-na
@@ -588,7 +586,6 @@ A-na-mu
 A-na-na
 AN-an-dul3
 An-an-ne2
-AN-an-ne2
 An-an-ri-sza
 A-na-ti
 A-na-tum
@@ -4032,7 +4029,6 @@ Lu2-ama-ga2
 Lu2-ama-na
 Lu2-a-ma-ru
 Lu2-an
-Lu2-AN
 Lu2-an-a
 Lu2-an-an
 Lu2-an-dul3
@@ -4440,7 +4436,6 @@ Lu2-sza6-i3-zu
 Lu2-sza6-mu-zu
 Lu2-sza6-sza6
 lu2-sza-lim
-Lu2-sza-lim
 Lu2-sze-ga
 Lu2-szesz
 Lu2-szesz-sig5
@@ -5935,7 +5930,6 @@ Pu3-usz-ki-in
 Pu3-zi
 Pu4-du-uk-ma-num2
 pu4-du-uk-sze-en
-Pu4-du-uk-sze-en
 Pu5-ma-dingir
 Pu5-um-wa-qar
 Pu-da

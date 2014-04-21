@@ -1,7 +1,7 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
 
-class Tablet implements JsonSerializable {
+class TabletGroup implements JsonSerializable {
 
     private $id;
     private $name;
@@ -12,41 +12,43 @@ class Tablet implements JsonSerializable {
     public function __construct($id, PDO $pdo) {
         $this->id = $id;
         $this->fetchTabletData($pdo); // Sets $this->{name, lang}
-        $this->objects = $this->fetchObjects($pdo);
+        $this->objects = $this->fetchContainers($pdo);
         $this->names = $this->fetchNames($pdo);
     }
 
     private function fetchTabletData(PDO $pdo) {
-        $sql = "SELECT * FROM `tablet` WHERE `tablet_id` = :tablet_id";
+        $sql = "SELECT * FROM `tablet_group` WHERE `tablet_group_id` = :tablet_group_id";
         $statement = $pdo->prepare($sql);
-        $statement->execute([':tablet_id' => $this->id]);
+        $statement->execute([':tablet_group_id' => $this->id]);
         $row = $statement->fetch(PDO::FETCH_ASSOC);
-        $this->name = $row['name'];
-        $this->lang = $row['lang'];
+        $this->name = $row['tablet_group_name'];
+        $this->lang = $row['tablet_group_lang'];
     }
 
     private function fetchNames(PDO $pdo) {
-        $sql = "SELECT `name_text` FROM `name_reference` NATURAL JOIN `name` WHERE `tablet_id` = :tablet_id";
+        $sql = "SELECT `name_text` FROM `text_section` NATURAL JOIN `name_reference` NATURAL JOIN `name` WHERE `tablet_group_id` = :tablet_group_id";
         $statement = $pdo->prepare($sql);
         // Bind :tablet_id to $this->id
-        $statement->execute([':tablet_id' => $this->id]);
+        $statement->execute([':tablet_group_id' => $this->id]);
         // Get results
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         // Converts from an array of arrays of strings to an array of strings.
         return array_column($result, 'name_text');
     }
 
-    private function fetchObjects(PDO $pdo) {
-        $sql = "SELECT * FROM `tablet_object` WHERE `tablet_id` = :tablet_id";
+    private function fetchContainers(PDO $pdo) {
+        // First level containers have no parent contianer, their parent container is NULL
+        $sql = 'SELECT * FROM `container`
+                WHERE `tablet_group_id` = :tablet_group_id AND `parent_container_id` IS NULL';
         $statement = $pdo->prepare($sql);
         // Bind :tablet_id to $this->id
-        $statement->execute([':tablet_id' => $this->id]);
+        $statement->execute([':tablet_group_id' => $this->id]);
         // Get results
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         $output = array();
         foreach ($result as $row) {
             // Append the new TabletObject to $output
-            $output[] = new TabletObject($row['tablet_object_id'], $row['obj_name'], $pdo);
+            $output[] = new Container($row['container_id'], $row['container_name'], $pdo);
         }
         return $output;
     }
@@ -130,31 +132,44 @@ class Tablet implements JsonSerializable {
             'objects' => $this->objects
         ];
     }
+
 }
 
-class TabletObject implements JsonSerializable {
+class Container implements JsonSerializable {
 
     private $id;
     private $name;
-    private $sections;
+    private $childContainers;
+    private $section;
 
     public function __construct($id, $name, PDO $pdo) {
         $this->id = $id;
         $this->name = $name;
-        $this->sections = $this->fetchSections($pdo);
+        $this->childContainers = $this->fetchChildContainers($pdo);
+        $this->section = $this->fetchSection($pdo);
     }
 
-    private function fetchSections(PDO $pdo) {
-        $sql = "SELECT * FROM `text_section` WHERE `tablet_object_id` = :tablet_object_id";
+    private function fetchSection(PDO $pdo) {
+        $sql = "SELECT * FROM `text_section` WHERE `container_id` = :my_id";
         $statement = $pdo->prepare($sql);
         // Bind :tablet_id to $this->id
-        $statement->execute([':tablet_object_id' => $this->id]);
+        $statement->execute([':my_id' => $this->id]);
+        // Get results
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+        return new TextSection($row['text_section_id'], $pdo);
+    }
+
+    private function fetchChildContainers(PDO $pdo) {
+        $sql = "SELECT * FROM `container` WHERE `parent_container_id` = :my_id";
+        $statement = $pdo->prepare($sql);
+        // Bind :tablet_id to $this->id
+        $statement->execute([':my_id' => $this->id]);
         // Get results
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
         $output = array();
         foreach ($result as $row) {
             // Append the new Text Section to $output
-            $output[] = new TextSection($row['text_section_id'], $row['text_section_name'], $pdo);
+            $output[] = new Container($row['container_id'], $row['container_name'], $pdo);
         }
         return $output;
     }
@@ -164,7 +179,7 @@ class TabletObject implements JsonSerializable {
     }
 
     public function addSection($section) {
-        array_push($this->sections, $section);
+        array_push($this->childContainers, $section);
     }
 
     public function display(array $termlist, array $names) {
@@ -172,14 +187,15 @@ class TabletObject implements JsonSerializable {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <a data-toggle=collapse data-target="<?php echo "#tablet-object-$this->id"; ?>">
-                    <?php echo $this->name; ?>
+        <?php echo $this->name; ?>
                 </a>
             </div>
             <div class="panel-body collapse in" id="<?php echo "tablet-object-$this->id"; ?>" >
                 <?php
-                foreach ($this->sections as $section) {
-                    $section->display($termlist, $names);
+                foreach ($this->childContainers as $container) {
+                    $container->display($termlist, $names);
                 }
+                $this->section->display($termlist, $names);
                 ?>
             </div>
         </div>
@@ -190,7 +206,7 @@ class TabletObject implements JsonSerializable {
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'sections' => $this->sections
+            'sections' => $this->childContainers
         ];
     }
 
@@ -199,12 +215,10 @@ class TabletObject implements JsonSerializable {
 class TextSection implements JsonSerializable {
 
     private $id;
-    private $name;
     private $lines;
 
-    public function __construct($id, $name, PDO $pdo) {
+    public function __construct($id, PDO $pdo) {
         $this->id = $id;
-        $this->name = $name;
         $this->lines = $this->fetchLines($pdo);
     }
 
@@ -218,7 +232,7 @@ class TextSection implements JsonSerializable {
         $output = array();
         foreach ($result as $row) {
             // Append the new line to $output
-            $output[] = $row['text'];
+            $output[] = $row['line_text'];
         }
         return $output;
     }
@@ -247,18 +261,13 @@ class TextSection implements JsonSerializable {
 
     public function display($termlist, $names) {
         ?>
-        <div class="panel panel-default">
-            <div class="panel-heading"><?php echo $this->name; ?></div>
-            <div class="panel-body">
-                <ol>
-                    <?php
-                    foreach ($this->lines as $line) {
-                        echo "<li>", $this->insertMarks($line, $termlist, $names), "</li>\n";
-                    }
-                    ?>
-                </ol>
-            </div>
-        </div>
+        <ol>
+            <?php
+            foreach ($this->lines as $line) {
+                echo "<li>", $this->insertMarks($line, $termlist, $names), "</li>\n";
+            }
+            ?>
+        </ol>
         <?php
     }
 
@@ -271,5 +280,4 @@ class TextSection implements JsonSerializable {
     }
 
 }
-
 ?>

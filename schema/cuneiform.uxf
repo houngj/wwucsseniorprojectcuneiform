@@ -1,180 +1,112 @@
-<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
-  <zoom_level>10</zoom_level>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.2">
+  <zoom_level>8</zoom_level>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>420</x>
+      <x>360</x>
       <y>0</y>
-      <w>320</w>
-      <h>180</h>
+      <w>296</w>
+      <h>184</h>
     </coordinates>
-    <panel_attributes>*tablet*
+    <panel_attributes>*tablet_group*
 --
-Represents a single text-bearing
-object from the corpus.  Generally
-these will be tablets, but there
-may be other types of object,
-such as bricks and statues.
+Represents one or more text-bearing object
+from the corpus. Generally these will be
+tablets, but there may be other types of
+object, such as bricks and statues. Any
+objects in the same tablet_group should be
+inseparable, i.e. a tablet and it's
+envelope.
 --
-PK, ID tablet_id INT
-       name      VARCHAR(100)
-       lang      VARCHAR(16)</panel_attributes>
+PK, ID tablet_group_id     INT
+       tablet_group_name   VARCHAR(100)
+       tablet_group_lang   VARCHAR(16)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>820</x>
+      <x>720</x>
       <y>0</y>
-      <w>370</w>
-      <h>180</h>
+      <w>296</w>
+      <h>184</h>
     </coordinates>
-    <panel_attributes>*tablet_object*
+    <panel_attributes>*container*
 --
 Represents a section of text on the
 tablet or object.  There may be more
 than one distinguishable source of
 text per object.
 --
-PK, ID tablet_object_id INT
-FK     tablet_id        INT
-       obj_name         VARCHAR(100) </panel_attributes>
+PK, ID container_id INT
+FK1    tablet_group_id     INT
+FK2    parent_container_id INT
+       container_name      VARCHAR(100)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>710</x>
-      <y>90</y>
-      <w>130</w>
-      <h>50</h>
+      <x>632</x>
+      <y>72</y>
+      <w>48</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=1
 m2=1
 </panel_attributes>
-    <additional_attributes>30;30;110;30</additional_attributes>
+    <additional_attributes>88;64;88;64</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>1300</x>
-      <y>0</y>
-      <w>370</w>
-      <h>290</h>
-    </coordinates>
-    <panel_attributes>*text_section_type*
---
-Represents locations on an object
-where text may occur.
---
-PK text_section_type_id INT
-   name                 VARCHAR(32)
---
-Bottom   = 1,
-Bulla    = 2,
-Edge     = 3,
-Envelope = 4,
-Left     = 5,
-Object   = 6,
-Obverse  = 7,
-Reverse  = 8,
-Seal     = 9,
-Tablet   = 10,
-Top      = 11
-    
-bg=light_gray</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>820</x>
-      <y>250</y>
-      <w>370</w>
-      <h>180</h>
+      <x>720</x>
+      <y>200</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*text_section*
 --
 Represents a portion of text on an object
 and its location on that object.
 --
-PK, ID text_section_id      INT
-FK1    tablet_object_id     INT
-       text_section_name    VARCHAR(100)
-FK2    text_section_type_id INT
-       section_text         TEXT</panel_attributes>
+PK, ID text_section_id   INT
+FK1    container_id      INT
+FK2    tablet_group_id   INT
+       text_section_name VARCHAR(100)
+       section_text      TEXT</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>1160</x>
-      <y>90</y>
-      <w>90</w>
-      <h>270</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-m1=1
-m2=n
-</panel_attributes>
-    <additional_attributes>30;30;70;30;70;250;30;250</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>1160</x>
-      <y>40</y>
-      <w>160</w>
-      <h>350</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-m1=1
-m2=1</panel_attributes>
-    <additional_attributes>140;30;100;30;100;330;30;330</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>420</x>
-      <y>230</y>
-      <w>320</w>
-      <h>200</h>
+      <x>1080</x>
+      <y>200</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*line*
 --
 Represents a line from a text
 section.
 --
-PK, ID line_id INT
+PK, ID line_id         INT
 FK     text_section_id INT
-       text            NVARCHAR(270)
+       line_text       NVARCHAR(270)
        translation     NVARCHAR(256)
        comment         NVARCHAR(270)
        </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>710</x>
-      <y>290</y>
-      <w>130</w>
-      <h>50</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-m1=1
-m2=n
-</panel_attributes>
-    <additional_attributes>110;30;30;30</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>1300</x>
-      <y>470</y>
-      <w>370</w>
-      <h>170</h>
+      <x>1080</x>
+      <y>520</y>
+      <w>296</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>*canonical_year*
 --
@@ -191,16 +123,16 @@ bg=light_gray</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>820</x>
-      <y>470</y>
-      <w>370</w>
-      <h>170</h>
+      <x>720</x>
+      <y>520</y>
+      <w>296</w>
+      <h>136</h>
     </coordinates>
     <panel_attributes>*canonical_month*
 --
-Contains canonical months, transliterations
-of month names known to correspond to
-calendarical months.
+Contains canonical months, 
+transliterations of month names known to
+correspond to calendarical months.
 --
 PK, ID canonical_month_id INT
        text               NVARCHAR(255)
@@ -213,10 +145,10 @@ bg=light_gray</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>820</x>
-      <y>690</y>
-      <w>370</w>
-      <h>180</h>
+      <x>720</x>
+      <y>360</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*month_reference*
 --
@@ -235,10 +167,10 @@ FK2    canonical_month_id  INT
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>1300</x>
-      <y>690</y>
-      <w>370</w>
-      <h>180</h>
+      <x>1080</x>
+      <y>360</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*year_reference*
 --
@@ -247,7 +179,7 @@ in tablet sections.
 --
 PK, ID year_reference_id   INT
 FK1    text_section_id     INT
-FK2    canonical_year_id  INT
+FK2    canonical_year_id   INT
        found_text          NVARCHAR(270)
        confidence          DECIMAL(4, 3)
        reviewed            BOOL
@@ -257,66 +189,66 @@ FK2    canonical_year_id  INT
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>1160</x>
-      <y>530</y>
-      <w>100</w>
-      <h>290</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-
-m1=1
-m2=1
-</panel_attributes>
-    <additional_attributes>30;30;80;30;80;270;30;270</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>760</x>
-      <y>320</y>
-      <w>960</w>
-      <h>470</h>
+      <x>664</x>
+      <y>416</y>
+      <w>72</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=n
 m2=1
 </panel_attributes>
-    <additional_attributes>60;30;30;30;30;340;940;340;940;450;910;450</additional_attributes>
+    <additional_attributes>56;176;24;176;24;24;56;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>760</x>
-      <y>320</y>
-      <w>480</w>
-      <h>480</h>
+      <x>992</x>
+      <y>264</y>
+      <w>104</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=n
 m2=1
 </panel_attributes>
-    <additional_attributes>60;30;30;30;30;340;460;340;460;460;430;460</additional_attributes>
+    <additional_attributes>24;24;56;24;56;176;88;176</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>1640</x>
-      <y>530</y>
-      <w>100</w>
-      <h>280</h>
+      <x>992</x>
+      <y>264</y>
+      <w>72</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
-m1=1
+m1=n
 m2=1
 </panel_attributes>
-    <additional_attributes>30;30;80;30;80;260;30;260</additional_attributes>
+    <additional_attributes>24;24;56;24;56;176;24;176</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1352</x>
+      <y>416</y>
+      <w>72</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+m1=n
+m2=1
+</panel_attributes>
+    <additional_attributes>24;176;56;176;56;24;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>420</x>
-      <y>470</y>
-      <w>320</w>
-      <h>170</h>
+      <x>360</x>
+      <y>360</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*name*
 --
@@ -324,17 +256,17 @@ Contains known personal names from
 corpus.
 --
 PK, ID name_id   INT
-       name_text VARCHAR(100)
+U      name_text VARCHAR(100)
 bg=light_gray</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>420</x>
-      <y>690</y>
-      <w>320</w>
-      <h>180</h>
+      <x>360</x>
+      <y>200</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*name_reference*
 --
@@ -343,45 +275,45 @@ names in tablet sections.
 --
 PK, ID name_reference_id   INT
 FK1    name_id             INT
-FK2    tablet_id           INT
+FK2    text_section_id     INT
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>710</x>
-      <y>510</y>
-      <w>80</w>
-      <h>280</h>
+      <x>304</x>
+      <y>264</y>
+      <w>72</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=1
 m2=1
 </panel_attributes>
-    <additional_attributes>30;30;60;30;60;260;30;260</additional_attributes>
+    <additional_attributes>56;176;24;176;24;24;56;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>350</x>
-      <y>120</y>
-      <w>90</w>
-      <h>690</h>
+      <x>632</x>
+      <y>264</y>
+      <w>104</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=n
 m2=1
 </panel_attributes>
-    <additional_attributes>70;30;30;30;30;670;70;670</additional_attributes>
+    <additional_attributes>88;24;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>0</x>
-      <y>20</y>
-      <w>320</w>
-      <h>180</h>
+      <y>0</y>
+      <w>280</w>
+      <h>184</h>
     </coordinates>
     <panel_attributes>*archive_tablet*
 --
@@ -390,7 +322,7 @@ between a virtual archive and a
 tablet.
 --
 PK, ID archive_tablet_id INT
-FK1    tablet_id         INT
+FK1    tablet_group_id   INT
 FK2    archive_id        INT
 </panel_attributes>
     <additional_attributes/>
@@ -399,9 +331,9 @@ FK2    archive_id        INT
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>0</x>
-      <y>230</y>
-      <w>320</w>
-      <h>180</h>
+      <y>200</y>
+      <w>280</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*archive*
 --
@@ -416,58 +348,113 @@ FK     user_id    INT
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>0</x>
-      <y>470</y>
-      <w>320</w>
-      <h>180</h>
+      <y>360</y>
+      <w>280</w>
+      <h>144</h>
     </coordinates>
     <panel_attributes>*user*
 --
 Represents a user of the site.
 --
 PK, ID user_id INT
-       name    NVARCHAR(256)</panel_attributes>
+       name    NVARCHAR(256)
+       hash    VARCHAR(60)</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>290</x>
-      <y>270</y>
-      <w>80</w>
-      <h>270</h>
+      <x>256</x>
+      <y>264</y>
+      <w>72</w>
+      <h>192</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=1
 m2=n
 </panel_attributes>
-    <additional_attributes>30;250;60;250;60;30;30;30</additional_attributes>
+    <additional_attributes>24;176;56;176;56;24;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>290</x>
-      <y>110</y>
-      <w>80</w>
-      <h>190</h>
+      <x>256</x>
+      <y>96</y>
+      <w>72</w>
+      <h>176</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=n
 m2=n
 </panel_attributes>
-    <additional_attributes>30;170;60;170;60;30;30;30</additional_attributes>
+    <additional_attributes>24;160;56;160;56;24;24;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>290</x>
-      <y>90</y>
-      <w>150</w>
-      <h>50</h>
+      <x>256</x>
+      <y>56</y>
+      <w>120</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 m1=1
 m2=1
 </panel_attributes>
-    <additional_attributes>130;30;30;30</additional_attributes>
+    <additional_attributes>104;24;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>992</x>
+      <y>232</y>
+      <w>104</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+m1=1
+m2=n
+</panel_attributes>
+    <additional_attributes>24;24;88;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>664</x>
+      <y>96</y>
+      <w>72</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+m1=1
+m2=1
+</panel_attributes>
+    <additional_attributes>56;24;24;24;24;160;56;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>632</x>
+      <y>56</y>
+      <w>104</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+m1=n
+m2=1</panel_attributes>
+    <additional_attributes>24;24;88;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>992</x>
+      <y>56</y>
+      <w>72</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+m1=n
+m2=1</panel_attributes>
+    <additional_attributes>24;24;56;24;56;64;24;64</additional_attributes>
   </element>
 </diagram>

@@ -53,11 +53,11 @@ class Search {
             // Get results
             $result = $statement->fetchAll();
         } else {
-            $sql = "SELECT t.tablet_id, SUM(MATCH(ts.section_text) AGAINST(:query)) as score\n" .
-                    "FROM `tablet` t NATURAL JOIN `tablet_object` o NATURAL JOIN `text_section` ts\n" .
-                    "WHERE MATCH(ts.section_text) AGAINST(:query IN BOOLEAN MODE)\n" .
-                    "GROUP BY t.tablet_id\n" .
-                    "ORDER BY `score` DESC\n";
+            $sql = 'SELECT tg.tablet_group_id, SUM(MATCH(ts.text_section_text) AGAINST(:query)) as score
+                    FROM `tablet_group` tg NATURAL JOIN `text_section` ts
+                    WHERE MATCH(ts.text_section_text) AGAINST(:query IN BOOLEAN MODE)
+                    GROUP BY tg.tablet_group_id
+                    ORDER BY `score` DESC';
             $statement = $this->pdo->prepare($sql);
             // Map ':search' to $this->query for index search
             $statement->execute([':query' => $this->query]);
@@ -73,7 +73,7 @@ class Search {
         $start_limit = ($page - 1) * Search::$resultsPerPage;
         $end_limit = min($start_limit + Search::$resultsPerPage, $numResults);
         for ($i = $start_limit; $i < $end_limit; ++$i) {
-            $tablet = new Tablet($this->results[$i]['tablet_id'], $this->pdo);
+            $tablet = new TabletGroup($this->results[$i]['tablet_group_id'], $this->pdo);
             $tablet->display($this->termlist);
         }
     }

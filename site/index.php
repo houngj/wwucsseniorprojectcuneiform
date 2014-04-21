@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // <rant>
-// When PHP `include`s or `require`s a file, it searches in the the directories 
+// When PHP `include`s or `require`s a file, it searches in the the directories
 // in the php.ini variable `include_path`, then it searches paths relative to
 // the FILE IT'S EXECUTING. This seems like a fine and dandy choice, until you
 // have files in subdirecories that are including other files, then all the

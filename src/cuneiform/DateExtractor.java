@@ -11,115 +11,91 @@ import cuneiform.stringComparator.Confidence;
 import cuneiform.stringComparator.StringComparator;
 import cuneiform.stringComparator.SumerianComparator;
 import cuneiform.stringComparator.SumerianLevenstheinSubstringComparator;
+import cuneiform.tablet.Container;
+import cuneiform.tablet.TabletGroup;
+import cuneiform.tablet.TextSection;
 
 public class DateExtractor {
     public final List<KnownDate>  knownMonths;
     public final List<KnownDate>  knownYears;
     public final StringComparator comparator = new SumerianComparator();
+    final String                  yearStart  = "mu";
+    final String                  monthStart = "iti";
 
-    public DateExtractor(Connection conn) {
+    public DateExtractor(Connection conn) throws SQLException {
         this.knownMonths = readKnownMonths(conn);
         this.knownYears  = readKnownYears(conn);
     }
 
-/*
-    private List<KnownDate> readKnownDates(String path) {
-        List<KnownDate> output = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("//") == false) {
-                    output.add(new KnownDate(line));
-                }
+    private List<KnownDate> readKnownMonths(Connection conn)
+            throws SQLException
+    {
+        List<KnownDate> months = new ArrayList<KnownDate>();
+
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("SELECT `canonical_month_id`, `text` FROM `canonical_month`;");
+            ResultSet rs = stmt.getResultSet();
+            if (rs == null) {
+                // No point of continuing if we can't retrieve the known months
+                throw new IllegalStateException("Cannot get ResultsSet");
             }
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
+            while (rs.next()) {
+                int id = rs.getInt("canonical_month_id");
+                String text = rs.getString("text");
+                months.add(new KnownDate(id, text));
+            }
         }
-        return output;
+        return months;
     }
-*/
 
-	private List<KnownDate> readKnownMonths(Connection conn) {
-		
-		List<KnownDate> months = new ArrayList<KnownDate>();
-		
-		try (Statement stmt = conn.createStatement()) {
-		    stmt.execute("SELECT `canonical_month_id`, `text` FROM `canonical_month`;");
-	    	
-	    	ResultSet rs = stmt.getResultSet();
-	    	
-	    	if (null != rs) {
-	    		while(rs.next()) {
-                    int id = rs.getInt("canonical_month_id");
-	    			String text = rs.getString("text");
-	    			
-	    			months.add(new KnownDate(id, text));
-	    		}
-	    	}
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return months;
-	}
+    private List<KnownDate> readKnownYears(Connection conn)
+            throws SQLException
+    {
+        List<KnownDate> years = new ArrayList<KnownDate>();
 
-	private List<KnownDate> readKnownYears(Connection conn) {
-		
-		List<KnownDate> years = new ArrayList<KnownDate>();
-    	
-		try (Statement stmt = conn.createStatement()) {
-			stmt.execute("SELECT `canonical_year_id`, `text` FROM `canonical_year`;");
-	    	
-	    	ResultSet rs = stmt.getResultSet();
-	    	
-	    	if (null != rs) {
-	    		while(rs.next()) {
-                    int id = rs.getInt("canonical_year_id");
-	    			String text = rs.getString("text");
-	    			
-	    			years.add(new KnownDate(id, text));
-	    		}
-	    	}
-	    	stmt.close();
-		}
-		catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return years;
-	}
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute("SELECT `canonical_year_id`, `text` FROM `canonical_year`;");
+            ResultSet rs = stmt.getResultSet();
+            if (rs == null) {
+                // No point of continuing if we can't retrieve the known years
+                throw new IllegalStateException("Cannot get ResultsSet");
+            }
+            while (rs.next()) {
+                int id = rs.getInt("canonical_year_id");
+                String text = rs.getString("text");
+                years.add(new KnownDate(id, text));
+            }
+            stmt.close();
+        }
+        return years;
+    }
 	
-    public void process(Connection conn, Tablet t) {
-        final String yearStart = "mu";
-        final String monthStart = "iti";
+    public void process(Connection conn, TabletGroup t) throws SQLException {
+       for (Container container : t.containers) {
+            process(conn, container);
+        }
+    }
 
-        t.insert(conn);
+    private void process(Connection conn, Container input) throws SQLException {
+        if (input.section != null) {
+            process(conn, input.section);
+        } else {
+            for(Container c : input.containers) {
+                process(conn, c);
+            }
+        }
+    }
 
-        for (TabletObject o : t.objects) {
-            for (TabletSection s : o.sections) {
-                List<String> graphemeList = new ArrayList<>();
-                for (String line : s.lines) {
-                    String[] graphs = line.split("-| ");
-                    for(String g :graphs) {
-                        graphemeList.add(g);
-                    }
-                }
-                String[] graphemeArray = graphemeList.toArray(new String[graphemeList.size()]);
-                for (int i = 0; i < graphemeArray.length - 1; ++i) {
-                    String currentGrapheme = graphemeArray[i].replaceAll("[^A-Za-z0-9]", "");
-                    if (yearStart.equalsIgnoreCase(currentGrapheme)) {
-                        FoundDate c = getConfidence(graphemeArray, i + 1, knownYears);
-                        t.setYear(c);
-                        s.insertYear(conn, c.foundDate, c);
-                    } else if (monthStart.equalsIgnoreCase(currentGrapheme)) {
-                        FoundDate c = getConfidence(graphemeArray, i + 1, knownMonths);
-                        t.setMonth(c);
-                        s.insertMonth(conn, c.foundDate, c);
-                    }
-                }
+    private void process(Connection conn, TextSection s) throws SQLException {
+        String[] graphemeArray = s.getGraphemes();
+        for (int i = 0; i < graphemeArray.length - 1; ++i) {
+            String currentGrapheme = graphemeArray[i].replaceAll("[^A-Za-z0-9]", "");
+            if (yearStart.equalsIgnoreCase(currentGrapheme)) {
+                FoundDate c = getConfidence(graphemeArray, i + 1, knownYears);
+                s.addYear(c);
+            } else if (monthStart.equalsIgnoreCase(currentGrapheme)) {
+                FoundDate c = getConfidence(graphemeArray, i + 1, knownMonths);
+                s.addMonth(c);
             }
         }
     }
