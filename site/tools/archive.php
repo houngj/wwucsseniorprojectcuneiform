@@ -75,7 +75,7 @@ class Archive {
         return true;
     }
 
-    public function display() {
+    public function display($links = false) {
         $tablets_count = count($this->tablets);
         ?>
         <li><span class="glyphicon glyphicon-minus-sign list-minimizer"></span>
@@ -83,7 +83,13 @@ class Archive {
             <ul>
                 <?php
                 foreach ($this->tablets as $tablet) {
-                    echo "<li>", $tablet['tablet_group_name'], "</li>\n";
+                    $tablet_id = $tablet['tablet_id'];
+                    $tablet_name = $tablet['tablet_group_name'];
+                    if ($links) {
+                        echo "<li><a href=\"#tablet-$tablet_id\">", $tablet_name,  "</a></li>\n";
+                    } else {
+                        echo "<li>", $tablet_name, "</li>\n";
+                    }
                 }
                 ?>
             </ul>

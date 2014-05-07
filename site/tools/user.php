@@ -126,12 +126,12 @@ class User
         return User::$archives;
     }
 
-    public static function printArchives(PDO $pdo) {
+    public static function printArchives(PDO $pdo, $links = false) {
         assert(User::isLoggedIn(), "User isn't logged in");
         User::fetchArchives($pdo); // Sets User::$archives
         echo "<ul style=\"list-style-type:none\">\n";
         foreach (User::$archives as $archive){
-            $archive->display();
+            $archive->display($links);
         }
         echo "</ul>";
     }

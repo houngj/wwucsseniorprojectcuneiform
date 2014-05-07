@@ -79,7 +79,7 @@ $archive = new Archive($_GET['archive_id'], $pdo);
                     <h4>My Virtual Archives</h4>
                     <?php
                     if (User::isLoggedIn()) {
-                        User::printArchives($pdo);
+                        User::printArchives($pdo, true);
                     } else {
                         echo "<p>Log in to use Virtual Archives</p>\n";
                     }
@@ -104,12 +104,5 @@ $archive = new Archive($_GET['archive_id'], $pdo);
         <!--Placed at the end of the document so the pages load faster -->
         <script src="js/bootstrap.min.js"></script>
         <script src="js/site.js"></script>
-        <script type="text/javascript">
-            if (document.getElementById("search").value.length !== 0) {
-                graphDates(document.getElementById("search").value);
-                graphNames(document.getElementById("search").value);
-                graphAttestation(document.getElementById("search").value);
-            }
-        </script>
     </body>
 </html>

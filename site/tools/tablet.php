@@ -58,7 +58,7 @@ class TabletGroup implements JsonSerializable {
         ?>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <?php echo $this->name; ?>
+                <a name="tablet-<?php echo $this->id; ?>"></a><?php echo $this->name; ?>
                 <div class="btn-group">
                     <?php if (User::isLoggedIn()) { ?>
                         <div class="btn-group">
