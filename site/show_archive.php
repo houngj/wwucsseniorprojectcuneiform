@@ -56,7 +56,7 @@ $archive = new Archive($_GET['archive_id'], $pdo);
                         <!-- User dashboard -->
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href=""><span class="glyphicon glyphicon-user"></span> <?php echo User::getName(); ?></a></li>
-                            <li><a href="?logout=true"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+                            <li><a href="logout.php"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
                         </ul>
                     <?php } else { ?>
                         <!-- Login form -->

@@ -25,9 +25,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 // If the user has submitted the login form, try to log in.
     User::login($pdo, $_POST['username'], $_POST['password'])
             or die("Invalid username or password");
-} else if (isset($_GET['logout'])) {
-// Log the user out.
-    User::logout();
 }
 
 if (isset($_GET['search'])) {
@@ -79,7 +76,7 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                         <!-- User dashboard -->
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href=""><span class="glyphicon glyphicon-user"></span> <?php echo User::getName(); ?></a></li>
-                            <li><a href="?logout=true"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+                            <li><a href="logout.php"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
                         </ul>
                     <?php } else { ?>
                         <!-- Login form -->
