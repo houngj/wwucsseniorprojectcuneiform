@@ -1,11 +1,11 @@
 // Set onclick for minus signs in archives
 $('.list-minimizer').click(function() {
     if ($(this).hasClass('glyphicon-minus-sign')) {
-        $(this).next('ul').hide();
+        $(this).siblings('ul').hide();
         $(this).removeClass('glyphicon-minus-sign');
         $(this).addClass('glyphicon-plus-sign');
     } else {
-        $(this).next('ul').show();
+        $(this).siblings('ul').show();
         $(this).removeClass('glyphicon-plus-sign');
         $(this).addClass('glyphicon-minus-sign');
     }
