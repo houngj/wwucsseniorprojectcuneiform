@@ -135,6 +135,36 @@ class User
         }
         echo "</ul>";
     }
+
+    public static function isUsernameAvailable(PDO $pdo, $name)
+    {
+        $sql =
+            'SELECT COUNT(U.name) AS count
+             FROM   user U
+             WHERE  U.name = :name';
+
+        $stmt = $pdo->prepare($sql);
+
+        if (! $stmt->execute( array(':name' => $name) ))
+        {
+            // The third element of errorInfo contains a human-
+            // readable error message.
+
+            die($stmt->errorInfo()[2]);
+        }
+
+        $success = 'undefined';
+
+        if ($row = $stmt->fetch())
+        {
+            $success =
+                (0 == $row['count'])
+                    ? 'true'
+                    : 'false';
+        }
+
+        return $success;
+    }
 }
 
 ?>
