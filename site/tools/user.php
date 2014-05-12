@@ -56,6 +56,35 @@ class User
     {
     }
 
+    public static function create(PDO $pdo, $name, $pass)
+    {
+        if (User::isUsernameAvailable($pdo, $name))
+        {
+            $sql =
+                'INSERT INTO user (name, hash)
+                 VALUES (:name, :hash)';
+
+            $stmt = $pdo->prepare($sql);
+
+            if (! $stmt->execute(
+                array(':name' => $name,
+                      ':hash' => password_hash($pass, PASSWORD_DEFAULT))))
+            {
+                // The third element of errorInfo contains a human-
+                // readable error message.
+
+                die($stmt->errorInfo()[2]);
+            }
+
+            if (User::login($pdo, $name, $pass))
+            {
+                header('Location: index.php');
+            }
+        }
+
+        return false;
+    }
+
     public static function login(PDO $pdo, $name, $pass)
     {
         $sql =

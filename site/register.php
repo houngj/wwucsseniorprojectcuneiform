@@ -19,6 +19,14 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/user.php';
 
 $pdo = getConnection();
 
+if (isset($_POST['username']) && isset($_POST['password1']))
+{
+    // The user has submitted the registration form.
+    // Let's try to create the user and log them in.
+    // If this works, we'll redirect away from this page.
+
+    user::create($pdo, $_POST['username'], $_POST['password1']);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -140,20 +148,20 @@ $pdo = getConnection();
                     <!-- Begin main content div -->
                     <h1>Register</h1>
 
-<form role="form" method="post">
+<form role="form" method="POST">
   <div class="form-group has-feedback has-error">
     <label class="control-label" for="username">User name</label>
-    <input type="text" class="form-control" id="username" placeholder="desired username">
+    <input type="text" class="form-control" id="username" name="username" placeholder="desired username">
     <span class="glyphicon glyphicon-remove form-control-feedback"></span>
   </div>
   <div class="form-group has-feedback has-error">
     <label class="control-label" for="password1">Password</label>
-    <input type="password" class="form-control" id="password1" placeholder="password">
+    <input type="password" class="form-control" id="password1" name="password1" placeholder="password">
     <span class="glyphicon glyphicon-remove form-control-feedback"></span>
   </div>
   <div class="form-group has-feedback has-error">
     <label class="control-label" for="password2">Verify password</label>
-    <input type="password" class="form-control" id="password2" placeholder="repeat password">
+    <input type="password" class="form-control" id="password2" name="password2" placeholder="repeat password">
     <span class="glyphicon glyphicon-remove form-control-feedback"></span>
   </div>
   <input type="submit" class="btn btn-default" disabled="disabled" value="Submit" />
