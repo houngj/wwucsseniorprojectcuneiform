@@ -69,6 +69,9 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                     <a class="navbar-brand" href="index.php">WWU Cuneiform</a>
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="index.php">Home</a></li>
+                        <?php if (! User::isLoggedIn()) { ?>
+                            <li class="active"><a href="register.php">Register</a></li>
+                        <?php } ?>
                     </ul>
                 </div>
                 <div class="navbar-collapse collapse">

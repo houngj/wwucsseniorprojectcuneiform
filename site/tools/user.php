@@ -56,6 +56,35 @@ class User
     {
     }
 
+    public static function create(PDO $pdo, $name, $pass)
+    {
+        if (User::isUsernameAvailable($pdo, $name))
+        {
+            $sql =
+                'INSERT INTO user (name, hash)
+                 VALUES (:name, :hash)';
+
+            $stmt = $pdo->prepare($sql);
+
+            if (! $stmt->execute(
+                array(':name' => $name,
+                      ':hash' => password_hash($pass, PASSWORD_DEFAULT))))
+            {
+                // The third element of errorInfo contains a human-
+                // readable error message.
+
+                die($stmt->errorInfo()[2]);
+            }
+
+            if (User::login($pdo, $name, $pass))
+            {
+                header('Location: index.php');
+            }
+        }
+
+        return false;
+    }
+
     public static function login(PDO $pdo, $name, $pass)
     {
         $sql =
@@ -134,6 +163,36 @@ class User
             $archive->display($links);
         }
         echo "</ul>";
+    }
+
+    public static function isUsernameAvailable(PDO $pdo, $name)
+    {
+        $sql =
+            'SELECT COUNT(U.name) AS count
+             FROM   user U
+             WHERE  U.name = :name';
+
+        $stmt = $pdo->prepare($sql);
+
+        if (! $stmt->execute( array(':name' => $name) ))
+        {
+            // The third element of errorInfo contains a human-
+            // readable error message.
+
+            die($stmt->errorInfo()[2]);
+        }
+
+        $success = 'undefined';
+
+        if ($row = $stmt->fetch())
+        {
+            $success =
+                (0 == $row['count'])
+                    ? 'true'
+                    : 'false';
+        }
+
+        return $success;
     }
 }
 
