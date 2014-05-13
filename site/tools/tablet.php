@@ -91,7 +91,18 @@ class TabletGroup implements JsonSerializable {
             </div>
             <div class="row">
                 <div class="panel-body col-md-8">
-                    <?php
+                    <button onclick="inputCommand('<?php echo $this->id ?>');"> Comment on Tablet </button>
+		    
+ 		    <script>
+			function inputCommand(id){
+				//var x = prompt("Enter Comment Here", id);
+				//create a popup window of inputComment.php
+				var newWindow= window.open("inputComment.php?id="+id, null, "height=200, width=400, status=yes,toolbar=no,menubar=no, location=no");
+			}
+			
+		    </script>
+		
+		    <?php
                     foreach ($this->objects as $object) {
                         $object->display($termlist, $this->names);
                     }
