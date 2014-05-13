@@ -67,14 +67,14 @@ class Search {
         return $result;
     }
 
-    function printResults($page) {
+    function printResults($page, $user_id) {
         $this->printPagination($page);
         $numResults = count($this->results);
         $start_limit = ($page - 1) * Search::$resultsPerPage;
         $end_limit = min($start_limit + Search::$resultsPerPage, $numResults);
         for ($i = $start_limit; $i < $end_limit; ++$i) {
             $tablet = new TabletGroup($this->results[$i]['tablet_group_id'], $this->pdo);
-            $tablet->display($this->termlist);
+            $tablet->display($this->termlist, $user_id, $this->pdo);
         }
     }
 
