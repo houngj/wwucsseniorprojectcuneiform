@@ -9,7 +9,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/archive.php';
 
 if (!isset($_GET['action'])) {
     // TODO, add more meaningful output
-    echo json_encode(false);
+    echo json_encode("\$_GET['action'] is not set.");
+    http_response_code(400);
     exit;
 }
 

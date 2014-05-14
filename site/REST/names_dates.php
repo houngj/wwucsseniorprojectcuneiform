@@ -1,14 +1,11 @@
 <?php
 
-function expandWidth($width) {
-
-}
-
 require_once $_SERVER['DOCUMENT_ROOT'] . '/connections/connection.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/functions.php';
 if (!isset($_GET['search'])) {
+    echo json_encode("\$_GET['search'] is not set");
     http_response_code(400);
-    die("search isn't set");
+    exit;
 }
 $start_time = microtime(true);
 $search = makeQuery($_GET['search']);
