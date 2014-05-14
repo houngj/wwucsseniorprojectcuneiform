@@ -138,7 +138,7 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                                 <div id="tabs-content" class="tab-content">
                                     <div class="tab-pane fade in active" id="tablet-result"><!-- Begin tablet results -->
                                         <?php
-                                        $search->printResults($page);
+                                        $search->printResults($page, User::getUserId());
                                         ?>
                                     </div><!-- End tablet results -->
                                     <div class="tab-pane fade" id="date-distribution"><!-- Begin date distribution -->

@@ -30,14 +30,14 @@ class TabletGroup implements JsonSerializable {
     }
 
     private function fetchComments(PDO $pdo, $user_id){
-	$sql = "SELECT * FROM `comments_table` WHERE `tablet_group_id` = :tablet_group_id AND `user_id` = :user_id";
+    	$sql = "SELECT * FROM `comments_table` WHERE `tablet_group_id` = :tablet_group_id AND `user_id` = :user_id";
 	$statement = $pdo->prepare($sql);
-	$statement->execute([':tablet_group_id' => $this->id, ':user_id'=> $user_id]);
-	$row = $statement->fetchAll(PDO::FETCH_ASSOC);
+	$statement->execute(array(':tablet_group_id' => $this->id, ':user_id'=> $user_id));
+	$row = $statement->fetch();
 	if($row == null){
 		return "";
 	} else {
-		return array_column($row, 'comment_text');
+		return $row[3];
 	}
     }
     
@@ -109,19 +109,20 @@ class TabletGroup implements JsonSerializable {
                 <div class="panel-body col-md-8">
 		    <?php
 			$comment = $this->fetchComments($pdo, $user_id);
-			$_SESSION['comment'] = $comment;
+			
+			//$_SESSION['comment'] = $comment;
 			$_SESSION['user_id'] = $user_id;
-			$_SESSION['tablet_group_id'] = $this->id;
+			$tablet_group_id = $this->id;
 			
 		    ?>
-                    <button onclick="inputCommand();"> Comment on Tablet </button>
+		    
+                    <button onclick="inputCommand(<?php echo $tablet_group_id ?>, '<?php echo $_SESSION['comment'] ?>');"> Comment on Tablet </button>
 		    
  		    <script>
-			function inputCommand(){
-				
+			function inputCommand(tablet_group_id, comment){	
 				//var x = prompt("Enter Comment Here", id);
 				//create a popup window of inputComment.php
-				var newWindow= window.open("inputComment.php", null, "height=400, width=800, status=yes,toolbar=no,menubar=no, location=no");
+				var newWindow= window.open("inputComment.php?group_id="+tablet_group_id+"&comment="+comment, null, "height=800, width=1600, status=yes,toolbar=no,menubar=no, location=no");
 			}
 			
 		    </script>
