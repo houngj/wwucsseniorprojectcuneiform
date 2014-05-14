@@ -34,7 +34,7 @@ class TabletGroup implements JsonSerializable {
 	$statement = $pdo->prepare($sql);
 	$statement->execute(array(':tablet_group_id' => $this->id, ':user_id'=> $user_id));
 	$row = $statement->fetch();
-	if($row == null){
+	if($row == False){
 		return "";
 	} else {
 		return $row[3];
@@ -110,7 +110,7 @@ class TabletGroup implements JsonSerializable {
 		    <?php
 			$comment = $this->fetchComments($pdo, $user_id);
 			
-			//$_SESSION['comment'] = $comment;
+			$_SESSION['comment'] = $comment;
 			$_SESSION['user_id'] = $user_id;
 			$tablet_group_id = $this->id;
 			
