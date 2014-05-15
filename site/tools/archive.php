@@ -38,6 +38,15 @@ class Archive {
         return $this->name;
     }
 
+    public function contains($tablet_group_id) {
+        foreach ($this->tablets as $tablet) {
+            if ($tablet['tablet_id'] == $tablet_group_id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function fetchArchiveData(PDO $pdo) {
         $sql = "SELECT * FROM `archive` WHERE `archive_id` = :archive_id";
         $statement = $pdo->prepare($sql);

@@ -20,7 +20,11 @@ function addTabletToNewArchive(tabletID) {
             url: 'REST/archive.php',
             data: d,
             success: function(data) {
-                addTabletToArchive(data, tabletID);
+                if (!data.success) {
+                    alert(data.error);
+                } else {
+                    addTabletToArchive(data.archive_id, tabletID);
+                }
             },
             error: function(data) {
                 alert('An error has occurred:\n' +
@@ -28,7 +32,7 @@ function addTabletToNewArchive(tabletID) {
                       'DATA:   ' + d + '\n' +
                       'FUNCT:  ' + 'addTabletToNewArchive\n' +
                       'STATUS: ' + data.statusText + "\n" +
-                      'ERROR:  ' + data.responseJSON);
+                      'ERROR:  ' + data.responseText);
             }
         });
     }
@@ -41,8 +45,12 @@ function addTabletToArchive(archiveID, tabletID) {
         url: 'REST/archive.php',
         data: d,
         success: function(data) {
-            // TODO: Instead of reloading the page, fetch the archives via REST.
-            location.reload();
+            if (!data.success) {
+                alert(data.error);
+            } else {
+                // TODO: Instead of reloading the page, fetch the archives via REST.
+                location.reload();
+            }
         },
         error: function(data) {
             alert('An error has occurred:\n' +
@@ -50,7 +58,7 @@ function addTabletToArchive(archiveID, tabletID) {
                   'DATA:   ' + d + '\n' +
                   'FUNCT:  ' + 'addTabletToArchive\n' +
                   'STATUS: ' + data.statusText + "\n" +
-                  'ERROR:  ' + data.responseJSON);
+                  'ERROR:  ' + data.responseText);
         }
     });
 }
@@ -85,7 +93,7 @@ function graphDates(search) {
                   'DATA:   ' + d + '\n' +
                   'FUNCT:  ' + 'graphDates\n' +
                   'STATUS: ' + data.statusText + "\n" +
-                  'ERROR:  ' + data.responseJSON);
+                  'ERROR:  ' + data.responseText);
         }
     });
 }
@@ -120,7 +128,7 @@ function graphNames(search) {
                   'DATA:   ' + d + '\n' +
                   'FUNCT:  ' + 'graphDates\n' +
                   'STATUS: ' + data.statusText + "\n" +
-                  'ERROR:  ' + data.responseJSON);
+                  'ERROR:  ' + data.responseText);
         }
     });
 }
@@ -152,7 +160,7 @@ function graphAttestation(search) {
                   'DATA:   ' + d + '\n' +
                   'FUNCT:  ' + 'graphDates\n' +
                   'STATUS: ' + data.statusText + "\n" +
-                  'ERROR:  ' + data.responseJSON);
+                  'ERROR:  ' + data.responseText);
         }
     });
 }

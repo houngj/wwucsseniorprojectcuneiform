@@ -524,7 +524,8 @@ CREATE TABLE `archive_tablet`
 	FOREIGN KEY (`archive_id`)
 		REFERENCES `archive` (`archive_id`),
 	FOREIGN KEY (`tablet_group_id`)
-		REFERENCES `tablet_group` (`tablet_group_id`)
+		REFERENCES `tablet_group` (`tablet_group_id`),
+    UNIQUE KEY (`archive_id`, `tablet_group_id`)
 );
 
 CREATE TABLE `comment`
