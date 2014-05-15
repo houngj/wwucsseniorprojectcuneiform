@@ -11,6 +11,9 @@ public abstract class DatabaseObject {
     }
 
     protected final void setID(int id) {
+        if (this.id != -1) {
+            throw new IllegalStateException("id != -1");
+        }
         this.id = id;
     }
 
