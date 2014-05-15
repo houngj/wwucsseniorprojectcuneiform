@@ -127,10 +127,10 @@ if (isset($_GET['page']) && ctype_digit($_GET['page']) && $_GET['page'] > 0) {
                     </form><!-- End search form -->
                     <?php if (isset($search)) { ?>
                         <div id="search-results"><!-- Begin search results -->
-                            <h2>Results</h2>
+                            <hr>
                             <div>
                                 <ul id="tabs-nav" class="nav nav-tabs">
-                                    <li class="active"><a href="#tablet-result" data-toggle="tab">Tablet Results</a></li>
+                                    <li class="active"><a href="#tablet-result" data-toggle="tab">Tablet Results (<?php echo $search->getResultsCount(); ?>)</a></li>
                                     <li><a href="#date-distribution" data-toggle="tab">Date Distribution</a></li>
                                     <li><a href="#name-distribution" data-toggle="tab">Name Distribution</a></li>
                                     <li><a href="#attestation-graph" data-toggle="tab">Attestation Graph</a></li>
