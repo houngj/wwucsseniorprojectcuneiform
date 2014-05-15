@@ -13,10 +13,15 @@ if (!User::isLoggedIn()) {
 }
 
 if (!isset($_GET['archive_id'])) {
-    die("GET['archive_id'] must be set");
+    die("\$_GET['archive_id'] must be set");
 }
 
-$archive = new Archive($_GET['archive_id'], $pdo);
+try {
+    $archive = new Archive($_GET['archive_id'], $pdo);
+} catch (ArchiveException $e) {
+    // Archive doesn't exist, go home.
+    header('Location: index.php');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

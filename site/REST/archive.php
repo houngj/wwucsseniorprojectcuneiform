@@ -36,6 +36,14 @@ if ($_GET['action'] === 'add_tablet' && isset($_GET['archive_id']) && isset($_GE
     exit;
 }
 
+if ($_GET['action'] === 'remove_tablet' && isset($_GET['archive_id']) && isset($_GET['tablet_group_id'])) {
+    $pdo = getConnection();
+    $archive = new Archive($_GET['archive_id'], $pdo);
+    $archive->removeTablet($_GET['tablet_group_id'], $pdo);
+    echo json_encode(['success' => true]);
+    exit;
+}
+
 echo json_encode(['success' => false,
                   'error'   => "Invalid action specified"]);
 http_response_code(400);

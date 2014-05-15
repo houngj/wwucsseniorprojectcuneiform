@@ -53,7 +53,7 @@ class TabletGroup implements JsonSerializable {
         return $output;
     }
 
-    public function display($termlist) {
+    public function display($termlist, $archive_id = -1) {
         $cdliUrl = "http://www.cdli.ucla.edu/search/search_results.php?SearchMode=Text&ObjectID=" . substr($this->name, 1, 7) . "&requestFrom=Submit+Query";
         ?>
         <div class="panel panel-default">
@@ -78,6 +78,13 @@ class TabletGroup implements JsonSerializable {
                                 ?>
                             </ul>
                         </div>
+                        <?php if ($archive_id !== -1) { ?>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" onclick="removeTabletFromArchive(<?php echo $archive_id; ?>, <?php echo $this->id; ?>)">
+                                    Remove
+                                </button>
+                            </div>
+                        <?php } ?>
                     <?php } ?>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">

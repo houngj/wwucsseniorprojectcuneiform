@@ -63,6 +63,31 @@ function addTabletToArchive(archiveID, tabletID) {
     });
 }
 
+function removeTabletFromArchive(archiveID, tabletID) {
+    var d = 'action=remove_tablet&archive_id=' + encodeURIComponent(archiveID) +
+            '&tablet_group_id=' + encodeURIComponent(tabletID);
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/archive.php',
+        data: d,
+        success: function(data) {
+            if (!data.success) {
+                alert(data.error);
+            } else {
+                // TODO: Instead of reloading the page, fetch the archives via REST.
+                location.reload();
+            }
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/archive.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'addTabletToArchive\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
+        }
+    });
+}
 
 function graphDates(search) {
     var d = 'search=' + search;

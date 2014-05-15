@@ -2,6 +2,12 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/user.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/tablet.php';
 
+class ArchiveException extends Exception {
+    public function __construct($message, $code = 0, $previous = null) {
+        parent::__construct($message, $code, $previous);
+    }
+}
+
 class Archive {
 
     private $id;
@@ -52,6 +58,9 @@ class Archive {
         $statement = $pdo->prepare($sql);
         // Bind archive_id to $this->id
         $statement->execute([':archive_id' => $this->id]);
+        if ($statement->rowCount() === 0) {
+            throw new ArchiveException("Archive doesn't exist");
+        }
         // Get data, must be only one row
         $row = $statement->fetch(PDO::FETCH_ASSOC);
         $this->name = $row['archive_name'];
@@ -84,6 +93,25 @@ class Archive {
         return true;
     }
 
+    public function removeTablet($tabletGroupID, PDO $pdo) {
+        $sql = 'DELETE FROM `archive_tablet`
+                WHERE `archive_id` = :archive_id AND `tablet_group_id` = :tablet_group_id';
+        $statement = $pdo->prepare($sql);
+        if (!$statement->execute([':archive_id' => $this->id, ':tablet_group_id' => $tabletGroupID])) {
+            die($statement->errorInfo());
+        }
+        $this->tablets = $this->fetchArchiveTablets($pdo);
+        // Remove archive if empty
+        if (count($this->tablets) === 0) {
+            $sql = 'DELETE FROM `archive` WHERE `archive_id` = :archive_id';
+            $statement = $pdo->prepare($sql);
+            if (!$statement->execute([':archive_id' => $this->id])) {
+                die($statement->errorInfo());
+            }
+        }
+        return true;
+    }
+
     public function display($links = false) {
         $tablets_count = count($this->tablets);
         ?>
@@ -109,9 +137,8 @@ class Archive {
     public function displayFullTablets($pdo) {
         foreach ($this->tablets as $tablet) {
             $tablet = new TabletGroup($tablet['tablet_id'], $pdo);
-            $tablet->display(array());
+            $tablet->display(array(), $this->id);
         }
     }
-
 }
 ?>
