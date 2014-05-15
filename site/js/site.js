@@ -161,3 +161,9 @@ function logout()
 {
     $('#logout')[0].submit();
 }
+
+function addComment(tablet_group_id) {
+    // create a popup window of inputComment.php
+    window.open("inputComment.php?tablet_group_id=" + tablet_group_id,
+                null, "height=800, width=1600, status=yes,toolbar=no,menubar=no, location=no");
+}
