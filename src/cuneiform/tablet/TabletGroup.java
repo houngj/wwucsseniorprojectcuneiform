@@ -90,11 +90,13 @@ public class TabletGroup
     private synchronized void insertTabletGroup(Connection conn)
             throws SQLException
     {
-        String query = "INSERT INTO `tablet_group` (`tablet_group_id`, `tablet_group_name`, `tablet_group_lang`) VALUES (NULL, ?, ?)";
+        int id = Integer.parseInt(name.substring(2, 8));
+        String query = "INSERT INTO `tablet_group` (`tablet_group_id`, `tablet_group_name`, `tablet_group_lang`) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, name);
+            stmt.setInt(1,  id);
+            stmt.setString(2, name);
             // TODO: Find way to insert default value.
-            stmt.setString(2, (lang == null) ? "sux" : lang);
+            stmt.setString(3, (lang == null) ? "sux" : lang);
             stmt.executeUpdate();
 
             try (ResultSet rs = stmt.getGeneratedKeys()) {

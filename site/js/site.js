@@ -15,82 +15,188 @@ function addTabletToNewArchive(tabletID) {
     var archiveName = prompt("Name of new archive:", "New Virtual Archive");
     if (archiveName !== null) {
         var d = 'action=new_archive&title=' + encodeURIComponent(archiveName);
-        $.getJSON('REST/archive.php', d, function(data) {
-            addTabletToArchive(data, tabletID);
+        $.ajax({
+            dataType: 'json',
+            url: 'REST/archive.php',
+            data: d,
+            success: function(data) {
+                if (!data.success) {
+                    alert(data.error);
+                } else {
+                    addTabletToArchive(data.archive_id, tabletID);
+                }
+            },
+            error: function(data) {
+                alert('An error has occurred:\n' +
+                      'URL:    ' + 'REST/archive.php\n' +
+                      'DATA:   ' + d + '\n' +
+                      'FUNCT:  ' + 'addTabletToNewArchive\n' +
+                      'STATUS: ' + data.statusText + "\n" +
+                      'ERROR:  ' + data.responseText);
+            }
         });
     }
 }
 
 function addTabletToArchive(archiveID, tabletID) {
     var d = 'action=add_tablet&archive_id=' + encodeURIComponent(archiveID) + '&tablet_group_id=' + encodeURIComponent(tabletID);
-    $.getJSON('REST/archive.php', d, function(data) {
-        location.reload();
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/archive.php',
+        data: d,
+        success: function(data) {
+            if (!data.success) {
+                alert(data.error);
+            } else {
+                // TODO: Instead of reloading the page, fetch the archives via REST.
+                location.reload();
+            }
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/archive.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'addTabletToArchive\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
+        }
     });
 }
 
+function removeTabletFromArchive(archiveID, tabletID) {
+    var d = 'action=remove_tablet&archive_id=' + encodeURIComponent(archiveID) +
+            '&tablet_group_id=' + encodeURIComponent(tabletID);
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/archive.php',
+        data: d,
+        success: function(data) {
+            if (!data.success) {
+                alert(data.error);
+            } else {
+                // TODO: Instead of reloading the page, fetch the archives via REST.
+                location.reload();
+            }
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/archive.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'addTabletToArchive\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
+        }
+    });
+}
 
 function graphDates(search) {
-    $.getJSON("./REST/dates.php", "search=" + search, function(data) {
-        var dataArray = [['Abbreviation', 'Count']];
+    var d = 'search=' + search;
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/dates.php',
+        data: d,
+        success: function(data) {
+            var dataArray = [['Abbreviation', 'Count']];
+            for (var i = 0; i < data.length; ++i) {
+                dataArray.push([data[i].abbreviation, parseInt(data[i].count)]);
+            }
 
-        for (var i = 0; i < data.length; ++i) {
-            dataArray.push([data[i].abbreviation, parseInt(data[i].count)]);
+            var chartData = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                'title': 'Date Distribution',
+                'width': 1000,
+                'height': 700,
+                'hAxis': {slantedText: true, slantedTextAngle: 80}
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('date-distribution'));
+            chart.draw(chartData, options);
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/dates.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'graphDates\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
         }
-
-        var chartData = google.visualization.arrayToDataTable(dataArray);
-        var options = {
-            'title': 'Date Distribution',
-            'width': 1000,
-            'height': 700,
-            'hAxis': {slantedText: true, slantedTextAngle: 80}
-        };
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('date-distribution'));
-        chart.draw(chartData, options);
     });
 }
 
 function graphNames(search) {
-    $.getJSON("./REST/names.php", "search=" + search, function(data) {
-        var dataArray = [['Name', 'Count']];
+    var d = 'search=' + search;
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/names.php',
+        data: d,
+        success: function(data) {
+            var dataArray = [['Name', 'Count']];
 
-        for (var i = 0; i < Math.min(data.length, 20); ++i) {
-            dataArray.push([data[i].name_text, parseInt(data[i].count)]);
+            for (var i = 0; i < Math.min(data.length, 20); ++i) {
+                dataArray.push([data[i].name_text, parseInt(data[i].count)]);
+            }
+
+            var chartData = google.visualization.arrayToDataTable(dataArray);
+            var options = {
+                'title': 'Name Distribution',
+                'width': 1000,
+                'height': 700,
+                'hAxis': {slantedText: true, slantedTextAngle: 80}
+            };
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('name-distribution'));
+            chart.draw(chartData, options);
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/names.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'graphDates\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
         }
-
-        var chartData = google.visualization.arrayToDataTable(dataArray);
-        var options = {
-            'title': 'Name Distribution',
-            'width': 1000,
-            'height': 700,
-            'hAxis': {slantedText: true, slantedTextAngle: 80}
-        };
-
-        var chart = new google.visualization.ColumnChart(document.getElementById('name-distribution'));
-        chart.draw(chartData, options);
     });
 }
 
 function graphAttestation(search) {
-    $.getJSON("./REST/names_dates.php", "search=" + search, function(data) {
-        var chartData = google.visualization.arrayToDataTable(data);
-        var options = {
-            title: 'Names vs Dates (' + search + ')',
-            width: 1000,
-            height: 700,
-            lineWidth: 0,
-            pointSize: 7,
-            hAxis: {title: 'Date'},
-            vAxis: {title: 'Name Occurances'},
-            legend: 'right'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('attestation-graph'));
-        chart.draw(chartData, options);
+    var d = 'search=' + search;
+    $.ajax({
+        dataType: 'json',
+        url: 'REST/names_dates.php',
+        data: d,
+        success: function(data) {
+            var chartData = google.visualization.arrayToDataTable(data);
+            var options = {
+                title: 'Names vs Dates (' + search + ')',
+                width: 1000,
+                height: 700,
+                lineWidth: 0,
+                pointSize: 7,
+                hAxis: {title: 'Date'},
+                vAxis: {title: 'Name Occurances'},
+                legend: 'right'
+            };
+            var chart = new google.visualization.LineChart(document.getElementById('attestation-graph'));
+            chart.draw(chartData, options);
+        },
+        error: function(data) {
+            alert('An error has occurred:\n' +
+                  'URL:    ' + 'REST/names_dates.php\n' +
+                  'DATA:   ' + d + '\n' +
+                  'FUNCT:  ' + 'graphDates\n' +
+                  'STATUS: ' + data.statusText + "\n" +
+                  'ERROR:  ' + data.responseText);
+        }
     });
 }
 
 function logout()
 {
     $('#logout')[0].submit();
+}
+
+function addComment(tablet_group_id) {
+    // create a popup window of inputComment.php
+    window.open("inputComment.php?tablet_group_id=" + tablet_group_id,
+                null, "height=800, width=1600, status=yes,toolbar=no,menubar=no, location=no");
 }

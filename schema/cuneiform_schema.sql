@@ -12,10 +12,6 @@ GRANT ALL ON `cuneiform`.* TO 'dingo'@'localhost'  IDENTIFIED BY 'hungry!';
 
 /* Create tables. */
 
-
-
-
-
 CREATE TABLE `tablet_group`
 (
 	`tablet_group_id`
@@ -528,10 +524,18 @@ CREATE TABLE `archive_tablet`
 	FOREIGN KEY (`archive_id`)
 		REFERENCES `archive` (`archive_id`),
 	FOREIGN KEY (`tablet_group_id`)
+<<<<<<< HEAD
 		REFERENCES `tablet_group` (`tablet_group_id`)
 );
 
 CREATE TABLE `comments_table`
+=======
+		REFERENCES `tablet_group` (`tablet_group_id`),
+    UNIQUE KEY (`archive_id`, `tablet_group_id`)
+);
+
+CREATE TABLE `comment`
+>>>>>>> upstream/master
 (
 	`comment_id`
 		INT
@@ -542,7 +546,11 @@ CREATE TABLE `comments_table`
 		NOT NULL,
 	`tablet_group_id`
 		INT
+<<<<<<< HEAD
 		NOT NULL,	
+=======
+		NOT NULL,
+>>>>>>> upstream/master
 	`comment_text`
 		NVARCHAR(270)
 		NULL
@@ -550,9 +558,15 @@ CREATE TABLE `comments_table`
 
 	FOREIGN KEY (`tablet_group_id`)
 		REFERENCES `tablet_group` (`tablet_group_id`),
+<<<<<<< HEAD
 	
 	FOREIGN KEY (`user_id`)
 		REFERENCES `user` (`user_id`)
 	
 	
+=======
+	FOREIGN KEY (`user_id`)
+		REFERENCES `user` (`user_id`),
+    UNIQUE KEY (`user_id`, `tablet_group_id`)
+>>>>>>> upstream/master
 );

@@ -19,14 +19,14 @@ class ParallelExtractor
     private final TabletFactory     factory;
     private final DateExtractor     dateExtractor;
     private final NameExtractor     nameExtractor;
-    private final List<TabletGroup> tablets   = new ArrayList<>();
+    private final List<TabletGroup> tablets           = new ArrayList<>();
     private Thread[]                threads;
-    private int                     years     = 0;
-    private int                     months    = 0;
+    private int                     years             = 0;
+    private int                     months            = 0;
     private int                     tabletsWithMonths = 0;
-    private int                     tabletsWithYears = 0;
-    private double                  yearConf  = 0;
-    private double                  monthConf = 0;
+    private int                     tabletsWithYears  = 0;
+    private double                  yearConf          = 0;
+    private double                  monthConf         = 0;
     private final String            dbHost;
     private final String            dbUser;
     private final String            dbPass;
@@ -125,7 +125,7 @@ class ParallelExtractor
         } catch (SQLException e) {
             // Something dreadful happened SQL-wise.
             System.out.println("Database access problem encountered: " + e.getMessage());
-            throw new IllegalStateException(e);
+            System.exit(-1);
         }
     }
 

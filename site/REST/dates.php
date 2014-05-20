@@ -4,7 +4,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/tools/functions.php';
 
 $start_time = microtime(true);
 if (!isset($_GET['search'])) {
-    echo json_encode("GET['search'] is not set");
+    echo json_encode("\$_GET['search'] is not set");
     http_response_code(400);
     exit;
 }

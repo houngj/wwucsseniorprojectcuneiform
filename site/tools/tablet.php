@@ -78,7 +78,11 @@ class TabletGroup implements JsonSerializable {
         return $output;
     }
 
+<<<<<<< HEAD
     public function display($termlist, $user_id, $pdo) {
+=======
+    public function display($termlist, $archive_id = -1) {
+>>>>>>> upstream/master
         $cdliUrl = "http://www.cdli.ucla.edu/search/search_results.php?SearchMode=Text&ObjectID=" . substr($this->name, 1, 7) . "&requestFrom=Submit+Query";
         ?>
         <div class="panel panel-default">
@@ -103,6 +107,13 @@ class TabletGroup implements JsonSerializable {
                                 ?>
                             </ul>
                         </div>
+                        <?php if ($archive_id !== -1) { ?>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default" onclick="removeTabletFromArchive(<?php echo $archive_id; ?>, <?php echo $this->id; ?>)">
+                                    Remove
+                                </button>
+                            </div>
+                        <?php } ?>
                     <?php } ?>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -116,6 +127,7 @@ class TabletGroup implements JsonSerializable {
             </div>
             <div class="row">
                 <div class="panel-body col-md-8">
+<<<<<<< HEAD
 		    <?php
 			$_SESSION['user_id'];
 			$tablet_group_id = $this->id;
@@ -130,6 +142,13 @@ class TabletGroup implements JsonSerializable {
  		    
 		
 		    <?php
+=======
+                    <?php if (User::isLoggedIn()) { ?>
+                        <button onclick="addComment(<?php echo $this->id; ?>);">Comment on Tablet</button>
+                    <?php } ?>
+
+                    <?php
+>>>>>>> upstream/master
                     foreach ($this->objects as $object) {
                         $object->display($termlist, $this->names);
                     }
@@ -225,7 +244,7 @@ class Container implements JsonSerializable {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <a data-toggle=collapse data-target="<?php echo "#tablet-object-$this->id"; ?>">
-        <?php echo $this->name; ?>
+                    <?php echo $this->name; ?>
                 </a>
             </div>
             <div class="panel-body collapse in" id="<?php echo "tablet-object-$this->id"; ?>" >
