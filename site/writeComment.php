@@ -1,7 +1,7 @@
 <?php
 	
 
-	
+		
 	$host = "localhost";
 	$db = "cuneiform";
 	$user = "dingo";
@@ -32,7 +32,9 @@
 	$q->execute(array($_SESSION['comment'])); 
 
 	
-			   
+	echo "<script>";
+		echo "window.close();";
+	echo "</script>";
                    
            
     

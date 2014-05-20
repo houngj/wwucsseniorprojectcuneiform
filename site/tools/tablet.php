@@ -29,13 +29,22 @@ class TabletGroup implements JsonSerializable {
 	return "";
     }
 
-    private function fetchComments(PDO $pdo, $user_id){
-    	$sql = "SELECT * FROM `comments_table` WHERE `tablet_group_id` = :tablet_group_id AND `user_id` = :user_id";
+    private function fetchComments($user_id, $tablet_group_id){
+    	
+	$host = "localhost";
+	$db = "cuneiform";
+	$user = "dingo";
+	$pass = "hungry!";
+	$pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+	$pdo->exec("SET profiling = 1");
+	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    	$sql = "SELECT * FROM `comments_table` WHERE tablet_group_id = :tablet_group_id AND user_id = :user_id";
 	$statement = $pdo->prepare($sql);
-	$statement->execute(array(':tablet_group_id' => $this->id, ':user_id'=> $user_id));
+	$statement->execute(array(':tablet_group_id' => $tablet_group_id, ':user_id'=> $user_id));
 	$row = $statement->fetch();
-	if($row == False){
-		return "";
+	if($row == null){
+		return "There is Nothing";
 	} else {
 		return $row[3];
 	}
@@ -108,24 +117,17 @@ class TabletGroup implements JsonSerializable {
             <div class="row">
                 <div class="panel-body col-md-8">
 		    <?php
-			$comment = $this->fetchComments($pdo, $user_id);
-			
-			$_SESSION['comment'] = $comment;
-			$_SESSION['user_id'] = $user_id;
+			$_SESSION['user_id'];
 			$tablet_group_id = $this->id;
-			
 		    ?>
-		    
-                    <button onclick="inputCommand(<?php echo $tablet_group_id ?>, '<?php echo $_SESSION['comment'] ?>');"> Comment on Tablet </button>
-		    
- 		    <script>
-			function inputCommand(tablet_group_id, comment){	
-				//var x = prompt("Enter Comment Here", id);
-				//create a popup window of inputComment.php
-				var newWindow= window.open("inputComment.php?group_id="+tablet_group_id+"&comment="+comment, null, "height=800, width=1600, status=yes,toolbar=no,menubar=no, location=no");
-			}
+		    		    
+                    <button onclick='(function (){
 			
-		    </script>
+
+				var newWindow= window.open("inputComment.php?group_id="+"<?php echo $tablet_group_id ?>"+"&user_id="+"<?php echo $user_id ?>", null, "height=800, width=1600, status=yes,toolbar=no,menubar=no, location=no");
+			})()'> Comment on Tablet </button>
+		    
+ 		    
 		
 		    <?php
                     foreach ($this->objects as $object) {
